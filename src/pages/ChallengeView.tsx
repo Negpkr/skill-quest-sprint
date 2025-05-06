@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { useParams, Navigate } from "react-router-dom";
@@ -53,100 +54,156 @@ const ChallengeView: React.FC = () => {
     if (idToUuidMap[slug]) {
       return idToUuidMap[slug];
     }
-    return null;
+    return slug; // If not found, return the original slug (it might already be a UUID)
   };
   
   useEffect(() => {
-    if (!id || !user) return;
+    if (!id) {
+      setNotFound(true);
+      setIsLoading(false);
+      return;
+    }
     
     const fetchChallengeData = async () => {
       try {
-        // Check if we need to map a string ID to a UUID
-        const uuidId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) 
-          ? id 
-          : findSprintIdBySlug(id);
+        // Process the ID to handle both string IDs and UUIDs
+        const processedId = findSprintIdBySlug(id);
+        console.log("Processing ID:", id, "to:", processedId);
         
-        if (!uuidId) {
-          console.log("Invalid ID format and no mapping found:", id);
+        if (!processedId) {
+          console.error("Invalid ID and no mapping found:", id);
           setNotFound(true);
           setIsLoading(false);
           return;
         }
         
-        console.log("Fetching sprint with UUID:", uuidId);
-        
-        // Fetch sprint details
-        const { data: sprintData, error: sprintError } = await supabase
-          .from('sprints')
-          .select('*')
-          .eq('id', uuidId)
-          .single();
-        
-        if (sprintError) {
-          console.error("Sprint error:", sprintError);
-          if (sprintError.code !== 'PGSQL_NO_ROWS_RETURNED') {
-            throw sprintError;
-          } else {
-            setNotFound(true);
-            setIsLoading(false);
-            return;
-          }
-        }
-        
-        if (sprintData) {
-          setSprint(sprintData);
+        // First, try to fetch from Supabase
+        try {
+          console.log("Fetching sprint with ID:", processedId);
           
-          // Fetch all challenges for this sprint
-          const { data: challengeData, error: challengeError } = await supabase
-            .from('challenges')
+          // Fetch sprint details
+          const { data: sprintData, error: sprintError } = await supabase
+            .from('sprints')
             .select('*')
-            .eq('sprint_id', uuidId)
-            .order('day', { ascending: true });
+            .eq('id', processedId)
+            .single();
           
-          if (challengeError) throw challengeError;
-          if (challengeData) setChallenges(challengeData);
+          if (sprintError) {
+            console.error("Sprint error from Supabase:", sprintError);
+            throw sprintError;
+          }
           
-          // Fetch user progress for this sprint
-          if (user) {
-            const { data: progressData, error: progressError } = await supabase
-              .from('user_progress')
+          if (sprintData) {
+            console.log("Successfully fetched sprint data:", sprintData);
+            setSprint(sprintData);
+            
+            // Fetch all challenges for this sprint
+            const { data: challengeData, error: challengeError } = await supabase
+              .from('challenges')
               .select('*')
-              .eq('sprint_id', uuidId)
-              .eq('user_id', user.id)
-              .single();
+              .eq('sprint_id', processedId)
+              .order('day', { ascending: true });
             
-            if (progressError && progressError.code !== 'PGSQL_NO_ROWS_RETURNED') throw progressError;
+            if (challengeError) {
+              console.error("Challenge error from Supabase:", challengeError);
+              throw challengeError;
+            }
             
-            // Calculate current day
-            if (progressData) {
-              const startDate = new Date(progressData.start_date);
-              const currentDate = new Date();
-              const diffTime = Math.abs(currentDate.getTime() - startDate.getTime());
-              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-              setCurrentDay(Math.min(diffDays, sprintData?.duration || 30));
-              
-              // Check if today's task is already completed
-              if (progressData.completed_date) {
-                const lastCompleted = new Date(progressData.completed_date);
-                if (lastCompleted.toDateString() === currentDate.toDateString()) {
-                  setTaskCompleted(true);
+            if (challengeData && challengeData.length > 0) {
+              console.log("Successfully fetched challenge data:", challengeData);
+              setChallenges(challengeData);
+            } else {
+              console.log("No challenges found for this sprint, using fallback data");
+              // If no challenges found, try to use mock data
+              useFallbackData();
+            }
+            
+            // Fetch user progress for this sprint if user is logged in
+            if (user) {
+              try {
+                const { data: progressData, error: progressError } = await supabase
+                  .from('user_progress')
+                  .select('*')
+                  .eq('sprint_id', processedId)
+                  .eq('user_id', user.id)
+                  .maybeSingle(); // Use maybeSingle instead of single to avoid errors
+                
+                if (progressError && progressError.code !== 'PGSQL_NO_ROWS_RETURNED') {
+                  console.error("Progress error from Supabase:", progressError);
                 }
+                
+                // Calculate current day if progress data exists
+                if (progressData) {
+                  const startDate = new Date(progressData.start_date);
+                  const currentDate = new Date();
+                  const diffTime = Math.abs(currentDate.getTime() - startDate.getTime());
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                  setCurrentDay(Math.min(diffDays, sprintData?.duration || 30));
+                  
+                  // Check if today's task is already completed
+                  if (progressData.completed_date) {
+                    const lastCompleted = new Date(progressData.completed_date);
+                    if (lastCompleted.toDateString() === currentDate.toDateString()) {
+                      setTaskCompleted(true);
+                    }
+                  }
+                }
+              } catch (progressErr) {
+                console.error("Error fetching progress:", progressErr);
+                // Continue execution even if progress fetch fails
               }
             }
+          } else {
+            console.log("No sprint data found in Supabase, using fallback data");
+            useFallbackData();
           }
-        } else {
-          setNotFound(true);
+        } catch (supabaseErr) {
+          console.error("Supabase error:", supabaseErr);
+          console.log("Falling back to static data");
+          useFallbackData();
         }
       } catch (error) {
-        console.error("Error fetching challenge data:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load challenge data. Please try again.",
-          variant: "destructive",
-        });
+        console.error("Error in fetchChallengeData:", error);
+        useFallbackData();
       } finally {
         setIsLoading(false);
       }
+    };
+    
+    // Function to use fallback static data when Supabase calls fail
+    const useFallbackData = () => {
+      console.log("Using fallback data for:", id);
+      // Check if we have mock data for this challenge
+      if (challengeData && id && challengeData[id]) {
+        const mockData = challengeData[id];
+        
+        setSprint({
+          id: id,
+          title: mockData.title,
+          description: mockData.description,
+          category: mockData.category,
+          difficulty: mockData.difficulty,
+          duration: 30 // Default
+        });
+        
+        // Create mock challenges from the tasks in the mock data
+        const mockChallenges = mockData.tasks.map(task => ({
+          id: task.id,
+          title: task.title,
+          description: "Complete this task to continue your progress in this challenge.",
+          day: task.day,
+          resources: JSON.stringify([
+            { title: "Getting Started", url: "https://example.com/resources" }
+          ])
+        }));
+        
+        setChallenges(mockChallenges);
+        return true;
+      }
+      
+      // If no relevant mock data is found
+      setNotFound(true);
+      return false;
     };
     
     fetchChallengeData();
@@ -156,66 +213,101 @@ const ChallengeView: React.FC = () => {
     if (!user || !id) return;
     
     try {
-      // Update user progress
-      const { error } = await supabase
+      // Process the ID to handle both string IDs and UUIDs
+      const processedId = findSprintIdBySlug(id);
+      
+      // Check if user progress exists first
+      const { data: existingProgress, error: checkError } = await supabase
         .from('user_progress')
-        .update({
-          completed_date: new Date().toISOString()
-        })
-        .eq('sprint_id', id)
-        .eq('user_id', user.id);
-      
-      if (error) throw error;
-      
-      // Update streak
-      const { data: streakData, error: streakError } = await supabase
-        .from('streaks')
         .select('*')
+        .eq('sprint_id', processedId)
         .eq('user_id', user.id)
-        .single();
-      
-      if (streakError && streakError.code !== 'PGSQL_NO_ROWS_RETURNED') throw streakError;
-      
-      if (streakData) {
-        // Update existing streak
-        const lastActivity = new Date(streakData.last_activity_date);
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
+        .maybeSingle();
+
+      if (checkError && checkError.code !== 'PGSQL_NO_ROWS_RETURNED') {
+        throw checkError;
+      }
         
-        let newStreak = streakData.current_streak;
-        
-        // If last activity was yesterday, increment streak
-        if (lastActivity.toDateString() === yesterday.toDateString()) {
-          newStreak += 1;
-        } 
-        // If last activity was not today (and not yesterday), reset streak to 1
-        else if (lastActivity.toDateString() !== today.toDateString()) {
-          newStreak = 1;
-        }
-        
-        const { error: updateError } = await supabase
-          .from('streaks')
+      if (existingProgress) {
+        // Update existing progress
+        const { error } = await supabase
+          .from('user_progress')
           .update({
-            current_streak: newStreak,
-            longest_streak: Math.max(newStreak, streakData.longest_streak),
-            last_activity_date: today.toISOString()
+            completed_date: new Date().toISOString()
           })
+          .eq('sprint_id', processedId)
           .eq('user_id', user.id);
-          
-        if (updateError) throw updateError;
+        
+        if (error) throw error;
       } else {
-        // Create new streak
-        const { error: createError } = await supabase
-          .from('streaks')
+        // Create new progress record
+        const { error } = await supabase
+          .from('user_progress')
           .insert([{
             user_id: user.id,
-            current_streak: 1,
-            longest_streak: 1,
-            last_activity_date: new Date().toISOString()
+            sprint_id: processedId,
+            start_date: new Date().toISOString(),
+            completed_date: new Date().toISOString(),
+            current_day: currentDay
           }]);
           
-        if (createError) throw createError;
+        if (error) throw error;
+      }
+      
+      // Update streak
+      try {
+        const { data: streakData, error: streakError } = await supabase
+          .from('streaks')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (streakError && streakError.code !== 'PGSQL_NO_ROWS_RETURNED') throw streakError;
+        
+        if (streakData) {
+          // Update existing streak
+          const lastActivity = new Date(streakData.last_activity_date);
+          const today = new Date();
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+          
+          let newStreak = streakData.current_streak;
+          
+          // If last activity was yesterday, increment streak
+          if (lastActivity.toDateString() === yesterday.toDateString()) {
+            newStreak += 1;
+          } 
+          // If last activity was not today (and not yesterday), reset streak to 1
+          else if (lastActivity.toDateString() !== today.toDateString()) {
+            newStreak = 1;
+          }
+          
+          const { error: updateError } = await supabase
+            .from('streaks')
+            .update({
+              current_streak: newStreak,
+              longest_streak: Math.max(newStreak, streakData.longest_streak),
+              last_activity_date: today.toISOString()
+            })
+            .eq('user_id', user.id);
+            
+          if (updateError) throw updateError;
+        } else {
+          // Create new streak
+          const { error: createError } = await supabase
+            .from('streaks')
+            .insert([{
+              user_id: user.id,
+              current_streak: 1,
+              longest_streak: 1,
+              last_activity_date: new Date().toISOString()
+            }]);
+            
+          if (createError) throw createError;
+        }
+      } catch (streakErr) {
+        console.error("Error updating streak:", streakErr);
+        // Continue execution even if streak update fails
       }
       
       setTaskCompleted(true);
@@ -243,7 +335,8 @@ const ChallengeView: React.FC = () => {
     
     try {
       return JSON.parse(resourcesStr);
-    } catch {
+    } catch (e) {
+      console.error("Error parsing resources:", e);
       return [];
     }
   };
@@ -269,7 +362,7 @@ const ChallengeView: React.FC = () => {
             {isLoading ? "Loading..." : sprint?.title || "Challenge"}
           </h1>
           <p className="text-muted-foreground">
-            Complete daily tasks to master this skill in 30 days
+            Complete daily tasks to master this skill in {sprint?.duration || 30} days
           </p>
           
           <div className="mt-6">
