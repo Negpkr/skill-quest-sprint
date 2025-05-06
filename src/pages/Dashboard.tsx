@@ -8,6 +8,7 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardContent from "@/components/dashboard/DashboardContent";
 import { useActiveSprint } from "@/hooks/useActiveSprint";
 import { useStreakData } from "@/hooks/useStreakData";
+import { motion } from "framer-motion";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -37,20 +38,46 @@ const Dashboard: React.FC = () => {
   
   const isLoading = isSprintLoading || isStreakLoading;
   
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0, 
+      opacity: 1
+    }
+  };
+  
   return (
     <Layout>
       <DashboardHeader />
       
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <DashboardContent
-          isLoading={isLoading}
-          activeSprint={activeSprint}
-          todaysTasks={todaysTasks}
-          streakDays={streakDays}
-          onTaskComplete={handleTaskComplete}
-          onMarkAllComplete={handleMarkAllComplete}
-        />
-      </div>
+      <motion.div
+        className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={itemVariants}>
+          <DashboardContent
+            isLoading={isLoading}
+            activeSprint={activeSprint}
+            todaysTasks={todaysTasks}
+            streakDays={streakDays}
+            onTaskComplete={handleTaskComplete}
+            onMarkAllComplete={handleMarkAllComplete}
+          />
+        </motion.div>
+      </motion.div>
     </Layout>
   );
 };

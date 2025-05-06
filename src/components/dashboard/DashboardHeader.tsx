@@ -1,32 +1,71 @@
 
 import React from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Star, Rocket } from "lucide-react";
+import { motion } from "framer-motion";
 
 const DashboardHeader: React.FC = () => {
+  const floatingElements = Array.from({ length: 15 }).map((_, i) => ({
+    id: i,
+    type: Math.random() > 0.5 ? 'circle' : Math.random() > 0.5 ? 'triangle' : 'square',
+    size: Math.floor(Math.random() * 30) + 10,
+    top: `${Math.floor(Math.random() * 100)}%`,
+    left: `${Math.floor(Math.random() * 100)}%`,
+    delay: Math.random() * 5,
+    duration: 5 + Math.random() * 7,
+  }));
+
   return (
-    <div className="bg-gradient-to-r from-softpurple via-skillpurple-300 to-softblue py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10">
-        {Array.from({ length: 12 }).map((_, i) => (
+    <div className="bg-gradient-to-r from-softpurple via-skillpurple-400 to-softblue py-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden rounded-lg shadow-lg">
+      {/* Animated floating elements */}
+      <div className="absolute inset-0 opacity-20">
+        {floatingElements.map((el) => (
           <div 
-            key={i} 
-            className="absolute h-8 w-8 rounded-full bg-white opacity-70 animate-float"
+            key={el.id} 
+            className={`absolute animate-float ${
+              el.type === 'circle' ? 'rounded-full' : 
+              el.type === 'triangle' ? 'triangle' : 'rounded'
+            } bg-white`}
             style={{
-              top: `${Math.floor(Math.random() * 100)}%`,
-              left: `${Math.floor(Math.random() * 100)}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${5 + Math.random() * 5}s`
+              top: el.top,
+              left: el.left,
+              width: el.size,
+              height: el.size,
+              animationDelay: `${el.delay}s`,
+              animationDuration: `${el.duration}s`
             }}
           />
         ))}
       </div>
       
+      {/* Grid pattern for background */}
+      <div className="absolute inset-0 bg-grid opacity-10"></div>
+      
       <div className="max-w-7xl mx-auto relative">
         <div className="text-center mb-8">
-          <div className="flex justify-center items-center mb-2">
-            <Sparkles className="text-white h-8 w-8 mr-2" />
-            <h1 className="text-3xl sm:text-4xl font-bold text-white">Your Dashboard</h1>
+          <div className="flex justify-center items-center mb-4">
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-full bg-white/30 blur-md animate-pulse"></div>
+              <div className="bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-500 p-4 rounded-full relative">
+                <Sparkles className="text-white h-8 w-8" />
+              </div>
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-bold text-white ml-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">Your Dashboard</h1>
           </div>
-          <p className="text-white/80">Track your progress, complete daily tasks, and launch your side hustle.</p>
+          <p className="text-white/90 text-lg max-w-2xl mx-auto">
+            Track your progress, complete daily tasks, and launch your side hustle.
+          </p>
+          
+          {/* Visual indicators */}
+          <div className="flex justify-center items-center mt-6 space-x-6">
+            <div className="flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+              <Star className="text-yellow-300 h-5 w-5 mr-2" />
+              <span className="text-white font-medium">Build Skills Daily</span>
+            </div>
+            <div className="flex items-center bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+              <Rocket className="text-orange-300 h-5 w-5 mr-2" />
+              <span className="text-white font-medium">Launch Your Hustle</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

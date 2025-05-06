@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import { ChallengeProps } from "../components/ChallengeCard";
+import { Award, ExternalLink, Book, Rocket } from "lucide-react";
 
 // Sample challenge details data
 const challengeData: Record<string, ChallengeProps & { 
@@ -84,146 +86,207 @@ const ChallengeDetail: React.FC = () => {
         ? "bg-softyellow text-yellow-800"
         : "bg-softorange text-orange-800";
 
+  const fadeInUp = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
+  };
+
   return (
     <Layout>
       {/* Challenge Header */}
-      <div 
-        className="relative bg-cover bg-center py-16" 
+      <motion.div 
+        className="relative bg-cover bg-center py-20 overflow-hidden"
         style={{ 
           backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.5)), url(${challenge.imageUrl})` 
         }}
+        initial="hidden"
+        animate="visible"
+        variants={{
+          visible: {
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
+        {/* Overlay with gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-neo-purple/70 to-neo-blue/70 mix-blend-multiply"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white relative">
           <div className="flex flex-wrap items-center justify-between">
-            <div>
-              <Badge className={difficultyClass}>
-                {challenge.difficulty}
-              </Badge>
-              <Badge className="ml-2 bg-softpurple text-purple-800">
-                {challenge.category}
-              </Badge>
-              <h1 className="text-3xl sm:text-4xl font-bold mt-4">{challenge.title}</h1>
-              <p className="mt-2 max-w-2xl">{challenge.description}</p>
-            </div>
+            <motion.div variants={fadeInUp}>
+              <div className="flex space-x-2 mb-4">
+                <Badge className={`${difficultyClass} px-3 py-1 text-sm font-medium`}>
+                  {challenge.difficulty}
+                </Badge>
+                <Badge className="bg-softpurple text-purple-800 px-3 py-1 text-sm font-medium">
+                  {challenge.category}
+                </Badge>
+              </div>
+              <h1 className="text-4xl sm:text-5xl font-bold mt-4 text-white">{challenge.title}</h1>
+              <p className="mt-4 max-w-2xl text-lg text-white/90">{challenge.description}</p>
+            </motion.div>
             
-            <Button className="mt-4 sm:mt-0 bg-skillpurple-400 hover:bg-skillpurple-500">Start This Challenge</Button>
+            <motion.div 
+              variants={fadeInUp} 
+              className="mt-6 sm:mt-0"
+            >
+              <Button className="mt-4 sm:mt-0 bg-white text-neo-purple hover:bg-white/90 hover:text-neo-blue transition-colors shadow-lg px-8 py-6 text-lg rounded-full">
+                <Rocket className="mr-2 h-5 w-5" />
+                Start This Challenge
+              </Button>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
       
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main challenge content */}
-          <div className="lg:col-span-2 space-y-8">
+          <motion.div 
+            className="lg:col-span-2 space-y-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             {/* About this challenge */}
-            <Card>
+            <Card className="border-0 shadow-lg overflow-hidden">
+              <div className="h-2 bg-gradient-to-r from-neo-purple to-neo-blue"></div>
               <CardHeader>
-                <CardTitle>About This Challenge</CardTitle>
+                <CardTitle className="text-2xl flex items-center">
+                  <Book className="mr-2 h-5 w-5 text-neo-purple" />
+                  About This Challenge
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="mb-6">{challenge.longDescription}</p>
+                <p className="mb-6 text-gray-700">{challenge.longDescription}</p>
                 
-                <h3 className="font-semibold text-lg mb-3">What You'll Learn</h3>
-                <div className="space-y-4">
+                <h3 className="font-semibold text-xl mb-4 text-gray-800">What You'll Learn</h3>
+                <div className="space-y-6">
                   {challenge.syllabus.map((week, index) => (
-                    <div key={index}>
-                      <h4 className="font-medium">{week.title}</h4>
+                    <motion.div 
+                      key={index}
+                      className="p-4 border border-gray-100 rounded-lg hover:shadow-md transition-shadow"
+                      whileHover={{ y: -5 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <h4 className="font-medium text-lg text-neo-purple">{week.title}</h4>
                       <p className="text-muted-foreground">{week.description}</p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </CardContent>
             </Card>
             
             {/* Task Checklist */}
-            <Card>
+            <Card className="border-0 shadow-lg overflow-hidden">
+              <div className="h-2 bg-gradient-to-r from-neo-green to-neo-teal"></div>
               <CardHeader>
-                <CardTitle>30-Day Task Checklist</CardTitle>
+                <CardTitle className="text-2xl flex items-center">
+                  <Award className="mr-2 h-5 w-5 text-neo-green" />
+                  30-Day Task Checklist
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {challenge.tasks.map((task) => (
-                    <div key={task.id} className="flex items-start space-x-3 p-2 rounded hover:bg-muted">
-                      <Checkbox id={task.id} checked={task.completed} />
+                    <motion.div 
+                      key={task.id} 
+                      className={`flex items-start space-x-3 p-3 rounded-lg ${task.completed ? 'bg-green-50' : 'hover:bg-muted'}`}
+                      whileHover={{ x: 5 }}
+                    >
+                      <Checkbox 
+                        id={task.id} 
+                        checked={task.completed} 
+                        className={task.completed ? "bg-neo-green border-neo-green text-white" : ""}
+                      />
                       <div className="space-y-1">
                         <label
                           htmlFor={task.id}
                           className={`font-medium leading-none cursor-pointer ${task.completed ? "line-through text-muted-foreground" : ""}`}
                         >
-                          Day {task.day}: {task.title}
+                          <span className="inline-block w-12 text-center mr-2 px-2 py-1 text-xs font-bold rounded-full bg-neo-purple text-white">
+                            Day {task.day}
+                          </span>
+                          {task.title}
                         </label>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
           
           {/* Sidebar */}
-          <div className="space-y-8">
+          <motion.div 
+            className="space-y-8"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
             {/* Resources */}
-            <Card>
+            <Card className="border-0 shadow-lg overflow-hidden">
+              <div className="h-2 bg-gradient-to-r from-neo-orange to-neo-yellow"></div>
               <CardHeader>
-                <CardTitle>Learning Resources</CardTitle>
+                <CardTitle className="text-xl">Learning Resources</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {challenge.resources.map((resource, index) => (
-                    <li key={index}>
+                    <motion.li 
+                      key={index}
+                      whileHover={{ x: 5 }}
+                    >
                       <a 
                         href={resource.url} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-skillpurple-500 hover:text-skillpurple-600 hover:underline flex items-center"
+                        className="text-neo-purple hover:text-neo-blue transition-colors flex items-center group"
                       >
-                        <svg 
-                          width="16" 
-                          height="16" 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          strokeWidth="2" 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          className="mr-2"
-                        >
-                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                          <polyline points="15 3 21 3 21 9"></polyline>
-                          <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
-                        {resource.title}
+                        <ExternalLink className="mr-2 h-4 w-4 text-gray-400 group-hover:text-neo-purple transition-colors" />
+                        <span className="underline underline-offset-4">{resource.title}</span>
                       </a>
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
               </CardContent>
             </Card>
             
             {/* Join Challenge */}
-            <Card className="bg-skillpurple-400 text-white">
-              <CardContent className="pt-6">
-                <h3 className="text-xl font-bold mb-2">Ready to Begin?</h3>
-                <p className="mb-4">Start this 30-day challenge and unlock daily tasks and tracking.</p>
-                <Button className="w-full bg-white text-skillpurple-500 hover:bg-gray-100 hover:text-skillpurple-600">
-                  Start This Challenge
-                </Button>
-              </CardContent>
-            </Card>
+            <motion.div 
+              whileHover={{ y: -5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Card className="border-0 shadow-lg overflow-hidden bg-gradient-to-br from-neo-purple to-neo-blue text-white">
+                <CardContent className="pt-8 pb-8">
+                  <h3 className="text-2xl font-bold mb-4">Ready to Begin?</h3>
+                  <p className="mb-6 text-white/90">Start this 30-day challenge and unlock daily tasks and tracking.</p>
+                  <Button className="w-full bg-white text-neo-purple hover:bg-white/90 hover:text-neo-blue transition-colors">
+                    Start This Challenge
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
             
             {/* Community */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Join the Community</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-4 text-sm">Connect with others taking this challenge to share tips and progress.</p>
-                <Button variant="outline" className="w-full">
-                  View Challenge Community
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+            <motion.div 
+              whileHover={{ y: -5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Card className="border-0 shadow-lg overflow-hidden">
+                <CardHeader>
+                  <CardTitle className="text-xl">Join the Community</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="mb-4 text-sm">Connect with others taking this challenge to share tips and progress.</p>
+                  <Button variant="outline" className="w-full border-neo-purple text-neo-purple hover:bg-neo-purple/10">
+                    View Challenge Community
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </Layout>

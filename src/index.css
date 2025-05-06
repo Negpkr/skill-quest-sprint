@@ -145,6 +145,50 @@
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
   }
+
+  /* New components for codedex-inspired design */
+  .neo-card {
+    @apply rounded-2xl bg-white border border-gray-100 shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300;
+  }
+
+  .neo-gradient-bg {
+    background: linear-gradient(to right, #764ba2, #667eea);
+  }
+  
+  .neo-gradient-purple {
+    background: linear-gradient(to right, #8e2de2, #4a00e0);
+  }
+  
+  .neo-gradient-blue {
+    background: linear-gradient(to right, #2193b0, #6dd5ed);
+  }
+  
+  .neo-gradient-green {
+    background: linear-gradient(to right, #11998e, #38ef7d);
+  }
+  
+  .neo-gradient-orange {
+    background: linear-gradient(to right, #f46b45, #eea849);
+  }
+  
+  .neo-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-skillpurple-400 to-blue-500;
+  }
+  
+  .bg-grid {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);
+  }
+  
+  .animated-circle {
+    @apply absolute rounded-full bg-white/10 animate-pulse;
+  }
+  
+  .triangle {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
 }
 
 @keyframes gradient {
