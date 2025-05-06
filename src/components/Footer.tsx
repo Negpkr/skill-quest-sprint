@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
+import { Youtube, Github } from "lucide-react";
 
 const Footer: React.FC = () => {
   return (
@@ -95,28 +96,30 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Connect */}
+          {/* Connect - Updated to only include YouTube and GitHub/GitLab */}
           <div>
             <h3 className="text-sm font-semibold mb-4">Connect</h3>
-            <ul className="space-y-2">
+            <ul className="space-y-4">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground text-sm">
-                  Twitter
+                <a 
+                  href="https://youtube.com" 
+                  className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-2 group"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Youtube className="h-5 w-5 text-red-500 group-hover:text-red-600 transition-colors" />
+                  <span>YouTube</span>
                 </a>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground text-sm">
-                  Instagram
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground text-sm">
-                  LinkedIn
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground text-sm">
-                  Discord
+                <a 
+                  href="https://github.com" 
+                  className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-2 group"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Github className="h-5 w-5 group-hover:text-foreground transition-colors" />
+                  <span>GitHub</span>
                 </a>
               </li>
             </ul>
