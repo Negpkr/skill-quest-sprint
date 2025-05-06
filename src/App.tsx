@@ -27,6 +27,8 @@ import Freelancing101 from "./pages/learn/Freelancing101";
 import TechStarter from "./pages/learn/TechStarter";
 import StartSprint from "./pages/StartSprint";
 import LearnCategoryPage from "./pages/learn/LearnCategoryPage";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -93,6 +95,16 @@ const App = () => {
                 <Route path="/start-sprint" element={
                   <ProtectedRoute>
                     <StartSprint />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <Settings />
                   </ProtectedRoute>
                 } />
                 

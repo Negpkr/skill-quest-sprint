@@ -118,17 +118,10 @@ const Navbar: React.FC = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 
-                {/* Practice Link */}
+                {/* Challenges Link */}
                 <NavigationMenuItem>
-                  <Link to="/practice" className="px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary transition-colors">
-                    Practice
-                  </Link>
-                </NavigationMenuItem>
-                
-                {/* Dashboard Link */}
-                <NavigationMenuItem>
-                  <Link to="/dashboard" className="px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary transition-colors">
-                    Dashboard
+                  <Link to="/challenges" className="px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary transition-colors">
+                    Challenges
                   </Link>
                 </NavigationMenuItem>
                 
@@ -142,9 +135,14 @@ const Navbar: React.FC = () => {
                 {/* Login/User Button */}
                 <NavigationMenuItem>
                   {!user ? (
-                    <Button asChild className="bg-skillpurple-400 hover:bg-skillpurple-500 text-white">
-                      <Link to="/login">Login</Link>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button asChild variant="ghost">
+                        <Link to="/login">Login</Link>
+                      </Button>
+                      <Button asChild className="bg-skillpurple-400 hover:bg-skillpurple-500 text-white">
+                        <Link to="/signup">Sign Up</Link>
+                      </Button>
+                    </div>
                   ) : (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -161,6 +159,9 @@ const Navbar: React.FC = () => {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                           <Link to="/dashboard">Dashboard</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/practice">Practice</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link to="/profile">Profile</Link>
@@ -229,18 +230,11 @@ const Navbar: React.FC = () => {
               </div>
             </div>
             <Link
-              to="/practice"
+              to="/challenges"
               className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
               onClick={() => setIsOpen(false)}
             >
-              Practice
-            </Link>
-            <Link
-              to="/dashboard"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
-              onClick={() => setIsOpen(false)}
-            >
-              Dashboard
+              Challenges
             </Link>
             <Link
               to="/about"
@@ -252,15 +246,38 @@ const Navbar: React.FC = () => {
             
             {/* Login/Logout for mobile */}
             {!user ? (
-              <Link
-                to="/login"
-                className="block px-3 py-2 rounded-md text-base font-medium bg-skillpurple-400 text-white"
-                onClick={() => setIsOpen(false)}
-              >
-                Login
-              </Link>
+              <>
+                <Link
+                  to="/login"
+                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="block px-3 py-2 rounded-md text-base font-medium bg-skillpurple-400 text-white"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
             ) : (
               <>
+                <Link
+                  to="/dashboard"
+                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/practice"
+                  className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Practice
+                </Link>
                 <Link
                   to="/profile"
                   className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"

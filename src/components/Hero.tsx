@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 const Hero: React.FC = () => {
   return (
     <div className="relative w-full overflow-hidden bg-gradient-to-b from-softpurple to-white py-16 sm:py-24">
+      {/* Mountain climbing pixel art journey background */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute -bottom-6 right-0 left-0 h-20 bg-grid-skillpurple-400/[0.2] [mask-image:linear-gradient(to_bottom,transparent,black)]" />
         {Array.from({ length: 20 }).map((_, i) => (
@@ -30,6 +31,7 @@ const Hero: React.FC = () => {
           </svg>
         </div>
         
+        {/* Main headline and subtext */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-skillpurple-600 via-skillpurple-400 to-purple-400">
           Start Your Skill Adventure
         </h1>
@@ -38,10 +40,12 @@ const Hero: React.FC = () => {
           Learn a skill. Launch a hustle. <span className="text-skillpurple-500 font-semibold">30 days.</span>
         </p>
         
+        {/* Call-to-Action button */}
         <Button asChild size="lg" className="text-lg h-14 px-8 bg-skillpurple-400 hover:bg-skillpurple-500 text-white pixel-shadow">
           <Link to="/challenges">Start Sprint</Link>
         </Button>
         
+        {/* Feature boxes */}
         <div className="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
           <div className="bg-white p-6 rounded-lg shadow-md border border-skillpurple-100 text-center">
             <div className="w-12 h-12 bg-softblue rounded-full mx-auto mb-4 flex items-center justify-center">
