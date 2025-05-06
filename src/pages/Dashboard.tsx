@@ -4,6 +4,7 @@ import Layout from "../components/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
+import { Sparkles, Zap, Award, TrendingUp } from "lucide-react";
 
 // Import refactored components
 import TaskList from "@/components/dashboard/TaskList";
@@ -168,11 +169,29 @@ const Dashboard: React.FC = () => {
   
   return (
     <Layout>
-      <div className="bg-secondary py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="bg-gradient-to-r from-softpurple via-skillpurple-300 to-softblue py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div 
+              key={i} 
+              className="absolute h-8 w-8 rounded-full bg-white opacity-70 animate-float"
+              style={{
+                top: `${Math.floor(Math.random() * 100)}%`,
+                left: `${Math.floor(Math.random() * 100)}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${5 + Math.random() * 5}s`
+              }}
+            />
+          ))}
+        </div>
+        
+        <div className="max-w-7xl mx-auto relative">
           <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold mb-2">Your Dashboard</h1>
-            <p className="text-muted-foreground">Track your progress, complete daily tasks, and launch your side hustle.</p>
+            <div className="flex justify-center items-center mb-2">
+              <Sparkles className="text-white h-8 w-8 mr-2" />
+              <h1 className="text-3xl sm:text-4xl font-bold text-white">Your Dashboard</h1>
+            </div>
+            <p className="text-white/80">Track your progress, complete daily tasks, and launch your side hustle.</p>
           </div>
         </div>
       </div>
@@ -187,29 +206,41 @@ const Dashboard: React.FC = () => {
             {/* Left column */}
             <div className="lg:col-span-2 space-y-8">
               {/* Today's Tasks */}
-              <TaskList 
-                tasks={todaysTasks}
-                onTaskComplete={handleTaskComplete}
-                onMarkAllComplete={handleMarkAllComplete}
-              />
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-70 transition-all"></div>
+                <TaskList 
+                  tasks={todaysTasks}
+                  onTaskComplete={handleTaskComplete}
+                  onMarkAllComplete={handleMarkAllComplete}
+                />
+              </div>
               
               {/* Calendar View */}
-              <SprintCalendar days={generateCalendarDays()} />
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg blur opacity-20 group-hover:opacity-60 transition-all"></div>
+                <SprintCalendar days={generateCalendarDays()} />
+              </div>
             </div>
             
             {/* Right column - stats and links */}
             <div className="space-y-8">
               {/* Current Challenge */}
-              <ActiveChallenge 
-                id={activeSprint.id}
-                title={activeSprint.title}
-                currentDay={activeSprint.current_day}
-                totalDays={activeSprint.total_days}
-                progressPercent={activeSprint.progress_percent}
-              />
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg blur opacity-25 group-hover:opacity-60 transition-all"></div>
+                <ActiveChallenge 
+                  id={activeSprint.id}
+                  title={activeSprint.title}
+                  currentDay={activeSprint.current_day}
+                  totalDays={activeSprint.total_days}
+                  progressPercent={activeSprint.progress_percent}
+                />
+              </div>
               
               {/* Progress Streak */}
-              <ProgressStreak streakDays={streakDays} />
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-lg blur opacity-25 group-hover:opacity-60 transition-all"></div>
+                <ProgressStreak streakDays={streakDays} />
+              </div>
             </div>
           </div>
         )}
