@@ -10,8 +10,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
 
-// Import the challenge data map to handle string IDs
-import { challengeData } from "../pages/ChallengeDetail";
+// Define a mapping for string IDs to UUIDs for compatibility with mock data
+const idToUuidMap: Record<string, string> = {
+  'design-starter': 'd0d766ab-5ca8-45c1-b789-500d132c8710',
+  'web-dev': '08c8f5db-c37e-417d-a6a4-d10c0bb78e52',
+  'freelance-launchpad': '7ead586e-49a1-4ba0-bbeb-97f6cc482170',
+  'personal-brand': '7a8d9d12-441d-4fe8-a9ab-3a40ea4fb2d3',
+  'productivity': '07d5fc8e-a14c-42ee-b7e9-19fb27eb4b56',
+  'freelance-pro': 'd43fed60-f098-42f9-8afc-ba2c19d61b70'
+};
 
 interface Challenge {
   id: string;
@@ -40,20 +47,13 @@ const ChallengeView: React.FC = () => {
   const [notFound, setNotFound] = useState(false);
   const { user } = useAuth();
 
-  // Helper function to find the UUID from the challenge data map
+  // Helper function to find the UUID from the challenge ID mapping
   const findSprintIdBySlug = (slug: string): string | null => {
-    // This would be replaced with a proper lookup from your database or mapping
-    // For now just hard-code the mapping for demonstration
-    const sprintMappings: Record<string, string> = {
-      'design-starter': 'd0d766ab-5ca8-45c1-b789-500d132c8710',
-      'web-dev': '08c8f5db-c37e-417d-a6a4-d10c0bb78e52',
-      'freelance-launchpad': '7ead586e-49a1-4ba0-bbeb-97f6cc482170',
-      'personal-brand': '7a8d9d12-441d-4fe8-a9ab-3a40ea4fb2d3',
-      'productivity': '07d5fc8e-a14c-42ee-b7e9-19fb27eb4b56',
-      'freelance-pro': 'd43fed60-f098-42f9-8afc-ba2c19d61b70'
-    };
-
-    return sprintMappings[slug] || null;
+    // Check if the slug is directly in our mapping
+    if (idToUuidMap[slug]) {
+      return idToUuidMap[slug];
+    }
+    return null;
   };
   
   useEffect(() => {

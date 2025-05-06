@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import ChallengeCard, { ChallengeProps } from "../components/ChallengeCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
-// Sample challenges data with improved images
+// Sample challenges data with improved images as fallback
 const challengesData: ChallengeProps[] = [
   {
     id: "design-starter",
@@ -83,7 +86,7 @@ const challengesData: ChallengeProps[] = [
 ];
 
 // Define categories and difficulties arrays
-const categories = ["All", "Design", "Tech", "Marketing", "Creator", "Business", "Freelance"];
+const categories = ["All", "Design", "Tech", "Marketing", "Creator", "Business", "Freelance", "Productivity", "Custom"];
 const difficulties = ["All", "Beginner", "Intermediate", "Advanced"];
 
 const containerVariants = {
@@ -112,8 +115,74 @@ const Challenges: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedDifficulty, setSelectedDifficulty] = useState("All");
+  const [sprints, setSprints] = useState<ChallengeProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const filteredChallenges = challengesData.filter((challenge) => {
+  useEffect(() => {
+    const fetchSprints = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('sprints')
+          .select('id, title, description, category, difficulty')
+          .order('title');
+          
+        if (error) {
+          throw error;
+        }
+        
+        if (data && data.length > 0) {
+          // Transform Supabase data to match ChallengeProps format
+          const formattedSprints = data.map(sprint => ({
+            id: sprint.id,
+            title: sprint.title,
+            description: sprint.description || "",
+            category: sprint.category,
+            difficulty: sprint.difficulty as "Beginner" | "Intermediate" | "Advanced",
+            imageUrl: getCategoryImage(sprint.category),
+            resources: [] // Default empty resources
+          }));
+          
+          setSprints(formattedSprints);
+          console.log("Fetched sprints:", formattedSprints);
+        } else {
+          // Fallback to sample data
+          setSprints(challengesData);
+          console.log("Using fallback challenge data");
+        }
+      } catch (error) {
+        console.error("Error fetching sprints:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load sprint data. Using sample data instead.",
+          variant: "destructive"
+        });
+        // Use hardcoded data as fallback
+        setSprints(challengesData);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchSprints();
+  }, []);
+  
+  // Helper function to get image URLs based on category
+  const getCategoryImage = (category: string): string => {
+    const categoryImages: Record<string, string> = {
+      Design: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?q=80&w=2000",
+      Tech: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=2000",
+      Freelance: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=2000",
+      Marketing: "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=2000",
+      Business: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?q=80&w=2000",
+      Creator: "https://images.unsplash.com/photo-1533750516457-a7f992034fec?q=80&w=2000",
+      Productivity: "https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?q=80&w=2000",
+      Custom: "https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?q=80&w=2000"
+    };
+    
+    return categoryImages[category] || "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=2000";
+  };
+  
+  const filteredChallenges = sprints.filter((challenge) => {
     const matchesSearch = challenge.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           challenge.description.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -211,7 +280,11 @@ const Challenges: React.FC = () => {
       
       <div className="py-12 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="max-w-7xl mx-auto">
-          {filteredChallenges.length > 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin h-10 w-10 border-4 border-skillpurple-400 rounded-full border-t-transparent"></div>
+            </div>
+          ) : filteredChallenges.length > 0 ? (
             <motion.div 
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
               variants={containerVariants}

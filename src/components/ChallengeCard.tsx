@@ -33,7 +33,9 @@ const ChallengeCard: React.FC<{ challenge: ChallengeProps }> = ({ challenge }) =
     Marketing: "bg-softpink text-pink-800",
     Creator: "bg-softorange text-orange-800",
     Business: "bg-softpeach text-orange-800",
-    Freelance: "bg-softgreen text-green-800"
+    Freelance: "bg-softgreen text-green-800",
+    Productivity: "bg-softblue text-blue-800",
+    Custom: "bg-gray-200 text-gray-800"
   };
 
   return (
@@ -85,7 +87,7 @@ const ChallengeCard: React.FC<{ challenge: ChallengeProps }> = ({ challenge }) =
       </CardContent>
       <CardFooter className="pt-4 mt-4">
         <Button asChild className="w-full bg-skillpurple-400 hover:bg-skillpurple-500">
-          <Link to={`/challenge-detail/${challenge.id}`}>View Challenge</Link>
+          <Link to={`/challenge/${challenge.id}`}>View Challenge</Link>
         </Button>
       </CardFooter>
     </Card>
