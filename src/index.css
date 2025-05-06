@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -5,17 +8,17 @@
 
 @layer base {
   :root {
-    /* Switch default to dark mode */
-    --background: 240 10% 5%;
+    /* Enhanced dark mode with better purples */
+    --background: 225 18% 10%;
     --foreground: 210 40% 98%;
 
-    --card: 240 10% 7%;
+    --card: 222 20% 14%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 240 10% 6%;
+    --popover: 222 20% 12%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 265 85% 65%;
+    --primary: 265 60% 67%;
     --primary-foreground: 240 10% 5%;
 
     --secondary: 240 8% 15%;
@@ -32,16 +35,16 @@
 
     --border: 240 8% 15%;
     --input: 240 8% 15%;
-    --ring: 265 85% 65%;
+    --ring: 265 65% 65%;
 
     --sidebar-background: 240 10% 7%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 265 85% 65%;
+    --sidebar-primary: 265 70% 65%;
     --sidebar-primary-foreground: 240 10% 5%;
     --sidebar-accent: 240 8% 15%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 240 8% 15%;
-    --sidebar-ring: 265 85% 65%;
+    --sidebar-ring: 265 70% 65%;
     
     --radius: 1rem;
   }
@@ -157,27 +160,27 @@
   }
 
   .neo-gradient-bg {
-    background: linear-gradient(to right, #764ba2, #667eea);
+    background: linear-gradient(to right, #9d5bdb, #6964e9);
   }
   
   .neo-gradient-purple {
-    background: linear-gradient(to right, #8e2de2, #4a00e0);
+    background: linear-gradient(to right, #a87cdd, #7e4bc8);
   }
   
   .neo-gradient-blue {
-    background: linear-gradient(to right, #2193b0, #6dd5ed);
+    background: linear-gradient(to right, #23accc, #57d4f4);
   }
   
   .neo-gradient-green {
-    background: linear-gradient(to right, #11998e, #38ef7d);
+    background: linear-gradient(to right, #2ae0b0, #95f2b8);
   }
   
   .neo-gradient-orange {
-    background: linear-gradient(to right, #f46b45, #eea849);
+    background: linear-gradient(to right, #ff7a59, #ffcc41);
   }
   
   .neo-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-skillpurple-400 to-blue-500;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-neo-purple to-neo-blue;
   }
   
   .bg-grid {

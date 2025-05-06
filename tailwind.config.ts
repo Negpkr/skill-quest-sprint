@@ -63,39 +63,39 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// SkillSprint custom colors - Enhanced with more vibrant options
+				// Updated purples for better matching with dark theme
 				skillpurple: {
-					50: '#f5f3ff',
-					100: '#ede9fe',
-					200: '#ddd6fe',
-					300: '#c4b5fd',
-					400: '#9b87f5', // Main primary color
-					500: '#7e69ab', // Darker primary
-					600: '#6e59a5',
-					700: '#5a4a8a',
+					50: '#f3effb',
+					100: '#e9e1f8',
+					200: '#d4c3f0',
+					300: '#b99de5',
+					400: '#a87cdd', // Enhanced primary purple
+					500: '#9164d6',
+					600: '#7e4bc8',
+					700: '#6a3ca9',
 				},
-				// New vibrant color palette for codedex-style design
+				// Enhanced neon colors for dark theme
 				neo: {
-					purple: '#8E2DE2',
-					blue: '#4A00E0',
-					teal: '#2193b0',
-					cyan: '#6dd5ed',
-					green: '#11998e',
-					lime: '#38ef7d',
-					orange: '#f46b45',
-					yellow: '#eea849',
-					pink: '#F27121',
-					red: '#E94057',
-					violet: '#8A2387',
-					indigo: '#512DA8',
+					purple: '#a87cdd', // Made more vibrant
+					blue: '#4e62e9', // More saturated
+					teal: '#23accc',
+					cyan: '#57d4f4',
+					green: '#2ae0b0',
+					lime: '#95f2b8',
+					orange: '#ff7a59',
+					yellow: '#ffcc41',
+					pink: '#ff5792',
+					red: '#ff4570',
+					violet: '#9d5bdb',
+					indigo: '#6964e9',
 				},
-				// Dark theme colors
+				// Dark theme colors - slightly adjusted
 				dark: {
-					background: '#1A1F2C',
-					card: '#221F26',
-					muted: '#403E43',
-					border: '#333333',
-					accent: '#555555',
+					background: '#151822', // Made slightly darker
+					card: '#1c1f2d', // Adjusted for better contrast
+					muted: '#2d303a',
+					border: '#333440',
+					accent: '#464958',
 				},
 				softgreen: '#F2FCE2',
 				softyellow: '#FEF7CD',
@@ -105,17 +105,22 @@ export default {
 				softpeach: '#FDE1D3',
 				softblue: '#D3E4FD',
 				softgray: '#F1F0FB',
-				// New vibrant versions
+				// Vibrant versions - made more neon for dark theme
 				vibrant: {
 					green: '#00F260',
 					yellow: '#FFDD00',
 					orange: '#FF9900',
-					purple: '#A742DF',
-					pink: '#FF66C4',
+					purple: '#b87fff', // Enhanced purple
+					pink: '#ff66c4', // Enhanced pink
 					peach: '#FF7E5F',
-					blue: '#0072FF',
+					blue: '#3891ff', // Enhanced blue
 					cyan: '#00FFFF',
 				}
+			},
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+				display: ['JetBrains Mono', 'monospace'],
+				code: ['Fira Code', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

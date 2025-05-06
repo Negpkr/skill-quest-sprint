@@ -15,7 +15,7 @@ const DashboardHeader: React.FC = () => {
   }));
 
   return (
-    <div className="bg-gradient-to-r from-dark-background via-neo-purple/30 to-neo-blue/30 py-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden rounded-lg shadow-lg">
+    <div className="bg-gradient-to-r from-dark-background via-neo-purple/20 to-neo-blue/20 py-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden rounded-lg shadow-lg">
       {/* Animated floating elements */}
       <div className="absolute inset-0 opacity-20">
         {floatingElements.map((el) => (
@@ -45,13 +45,13 @@ const DashboardHeader: React.FC = () => {
           <div className="flex justify-center items-center mb-4">
             <div className="relative">
               <div className="absolute -inset-1 rounded-full bg-white/30 blur-md animate-pulse"></div>
-              <div className="bg-gradient-to-br from-neo-pink via-neo-purple to-neo-blue p-4 rounded-full relative">
+              <div className="bg-gradient-to-br from-neo-violet via-neo-purple to-neo-blue p-4 rounded-full relative">
                 <Sparkles className="text-white h-8 w-8" />
               </div>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-white ml-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">Your Dashboard</h1>
+            <h1 className="font-display text-4xl sm:text-5xl font-bold text-white ml-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">Your Dashboard</h1>
           </div>
-          <p className="text-white/90 text-lg max-w-2xl mx-auto">
+          <p className="text-white/90 text-lg max-w-2xl mx-auto font-sans">
             Track your progress, complete daily tasks, and launch your side hustle.
           </p>
           
@@ -59,11 +59,11 @@ const DashboardHeader: React.FC = () => {
           <div className="flex justify-center items-center mt-6 space-x-6">
             <div className="flex items-center bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
               <Star className="text-yellow-300 h-5 w-5 mr-2" />
-              <span className="text-white font-medium">Build Skills Daily</span>
+              <span className="text-white font-medium font-sans">Build Skills Daily</span>
             </div>
             <div className="flex items-center bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
               <Rocket className="text-orange-300 h-5 w-5 mr-2" />
-              <span className="text-white font-medium">Launch Your Hustle</span>
+              <span className="text-white font-medium font-sans">Launch Your Hustle</span>
             </div>
           </div>
         </div>
