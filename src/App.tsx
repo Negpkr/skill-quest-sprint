@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,76 +30,81 @@ import LearnCategoryPage from "./pages/learn/LearnCategoryPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// Create a client
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/help" element={<HelpCenter />} />
-            <Route path="/report" element={<ReportProblem />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/learn/:category" element={<LearnCategoryPage />} />
-            <Route path="/design-basics" element={<DesignBasics />} />
-            <Route path="/freelancing-101" element={<Freelancing101 />} />
-            <Route path="/tech-starter" element={<TechStarter />} />
-            
-            {/* Protected routes */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/practice" element={
-              <ProtectedRoute>
-                <Practice />
-              </ProtectedRoute>
-            } />
-            <Route path="/challenges" element={
-              <ProtectedRoute>
-                <ChallengeLibrary />
-              </ProtectedRoute>
-            } />
-            <Route path="/challenge/:id" element={
-              <ProtectedRoute>
-                <ChallengeView />
-              </ProtectedRoute>
-            } />
-            <Route path="/build" element={
-              <ProtectedRoute>
-                <Build />
-              </ProtectedRoute>
-            } />
-            <Route path="/community" element={
-              <ProtectedRoute>
-                <Community />
-              </ProtectedRoute>
-            } />
-            <Route path="/start-sprint" element={
-              <ProtectedRoute>
-                <StartSprint />
-              </ProtectedRoute>
-            } />
-            
-            {/* 404 route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <AuthProvider>
+            <BrowserRouter>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/help" element={<HelpCenter />} />
+                <Route path="/report" element={<ReportProblem />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/learn/:category" element={<LearnCategoryPage />} />
+                <Route path="/design-basics" element={<DesignBasics />} />
+                <Route path="/freelancing-101" element={<Freelancing101 />} />
+                <Route path="/tech-starter" element={<TechStarter />} />
+                
+                {/* Protected routes */}
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/practice" element={
+                  <ProtectedRoute>
+                    <Practice />
+                  </ProtectedRoute>
+                } />
+                <Route path="/challenges" element={
+                  <ProtectedRoute>
+                    <ChallengeLibrary />
+                  </ProtectedRoute>
+                } />
+                <Route path="/challenge/:id" element={
+                  <ProtectedRoute>
+                    <ChallengeView />
+                  </ProtectedRoute>
+                } />
+                <Route path="/build" element={
+                  <ProtectedRoute>
+                    <Build />
+                  </ProtectedRoute>
+                } />
+                <Route path="/community" element={
+                  <ProtectedRoute>
+                    <Community />
+                  </ProtectedRoute>
+                } />
+                <Route path="/start-sprint" element={
+                  <ProtectedRoute>
+                    <StartSprint />
+                  </ProtectedRoute>
+                } />
+                
+                {/* 404 route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+};
 
 export default App;
