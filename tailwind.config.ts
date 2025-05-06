@@ -63,20 +63,21 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				skillnavy: {
-					50: '#e6f0fb',
-					100: '#cce1f7',
-					200: '#99c4ef',
-					300: '#66a6e7',
-					400: '#3388df', // Enhanced primary navy
-					500: '#1a6bc7',
-					600: '#14559f',
-					700: '#104077',
+				// Updated purples for better matching with dark theme
+				skillpurple: {
+					50: '#f3effb',
+					100: '#e9e1f8',
+					200: '#d4c3f0',
+					300: '#b99de5',
+					400: '#a87cdd', // Enhanced primary purple
+					500: '#9164d6',
+					600: '#7e4bc8',
+					700: '#6a3ca9',
 				},
-				// Enhanced neon colors for dark theme with navy as primary
+				// Enhanced neon colors for dark theme
 				neo: {
-					navy: '#1a6bc7', // Primary navy blue
-					blue: '#3388df', // Secondary navy blue
+					purple: '#a87cdd', // Made more vibrant
+					blue: '#4e62e9', // More saturated
 					teal: '#23accc',
 					cyan: '#57d4f4',
 					green: '#2ae0b0',
@@ -85,8 +86,8 @@ export default {
 					yellow: '#ffcc41',
 					pink: '#ff5792',
 					red: '#ff4570',
-					violet: '#3d5afa',
-					indigo: '#3d5afa',
+					violet: '#9d5bdb',
+					indigo: '#6964e9',
 				},
 				// Dark theme colors - slightly adjusted
 				dark: {
@@ -99,7 +100,7 @@ export default {
 				softgreen: '#F2FCE2',
 				softyellow: '#FEF7CD',
 				softorange: '#FEC6A1',
-				softnavy: '#D3E4FD',
+				softpurple: '#E5DEFF',
 				softpink: '#FFDEE2',
 				softpeach: '#FDE1D3',
 				softblue: '#D3E4FD',
@@ -109,9 +110,10 @@ export default {
 					green: '#00F260',
 					yellow: '#FFDD00',
 					orange: '#FF9900',
-					navy: '#1a6bc7', // Enhanced navy
-					blue: '#3388df', // Enhanced blue
+					purple: '#b87fff', // Enhanced purple
+					pink: '#ff66c4', // Enhanced pink
 					peach: '#FF7E5F',
+					blue: '#3891ff', // Enhanced blue
 					cyan: '#00FFFF',
 				}
 			},
@@ -149,29 +151,17 @@ export default {
 				'pulse-glow': {
 					'0%, 100%': { 
 						opacity: 1,
-						boxShadow: '0 0 20px rgba(26, 107, 199, 0.5)'
+						boxShadow: '0 0 20px rgba(155, 135, 245, 0.5)'
 					},
 					'50%': { 
 						opacity: 0.8,
-						boxShadow: '0 0 40px rgba(26, 107, 199, 0.8)'
+						boxShadow: '0 0 40px rgba(155, 135, 245, 0.8)'
 					},
 				},
 				'shine': {
 					'0%': { backgroundPosition: '200% center' },
 					'100%': { backgroundPosition: '-200% center' },
-				},
-				'orbit': {
-					'0%': { transform: 'rotate(0deg) translateX(10px) rotate(0deg)' },
-					'100%': { transform: 'rotate(360deg) translateX(10px) rotate(-360deg)' },
-				},
-				'bounce-slow': {
-					'0%, 100%': { transform: 'translateY(0)' },
-					'50%': { transform: 'translateY(-10px)' },
-				},
-				'spin-slow': {
-					'0%': { transform: 'rotate(0deg)' },
-					'100%': { transform: 'rotate(360deg)' },
-				},
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -179,16 +169,13 @@ export default {
 				'float': 'float 5s ease-in-out infinite',
 				'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
 				'shine': 'shine 8s ease-in-out infinite',
-				'orbit': 'orbit 8s linear infinite',
-				'bounce-slow': 'bounce-slow 3s ease-in-out infinite',
-				'spin-slow': 'spin-slow 10s linear infinite',
 			},
 			backgroundImage: {
 				'grid-pattern': 'linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)',
-				'hero-gradient': 'linear-gradient(to right, #1a6bc7, #3d5afa)',
-				'card-gradient': 'linear-gradient(135deg, #1a6bc7 0%, #3d5afa 100%)',
-				'highlight-gradient': 'linear-gradient(45deg, #3388df, #57d4f4)',
-				'cta-gradient': 'linear-gradient(to right, #1a6bc7, #3388df)',
+				'hero-gradient': 'linear-gradient(to right, #4A00E0, #8E2DE2)',
+				'card-gradient': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+				'highlight-gradient': 'linear-gradient(45deg, #FF9A9E, #FAD0C4)',
+				'cta-gradient': 'linear-gradient(to right, #FC5C7D, #6A82FB)',
 				'dark-gradient': 'linear-gradient(to bottom, #1A1F2C, #252A3C)',
 			}
 		}
