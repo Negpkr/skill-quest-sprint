@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Layout from "../components/Layout";
 import ChallengeCard, { ChallengeProps } from "../components/ChallengeCard";
@@ -83,6 +82,7 @@ const challengesData: ChallengeProps[] = [
   }
 ];
 
+// Define categories and difficulties arrays
 const categories = ["All", "Design", "Tech", "Marketing", "Creator", "Business", "Freelance"];
 const difficulties = ["All", "Beginner", "Intermediate", "Advanced"];
 

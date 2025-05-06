@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import ChallengeView from "./pages/ChallengeView";
+import ChallengeDetail from "./pages/ChallengeDetail";
 import ChallengeLibrary from "./pages/ChallengeLibrary";
 import Signup from "./pages/Signup";
 import Build from "./pages/Build";
@@ -31,6 +32,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Challenges from "./pages/Challenges";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -60,6 +62,7 @@ const App = () => {
                 <Route path="/design-basics" element={<DesignBasics />} />
                 <Route path="/freelancing-101" element={<Freelancing101 />} />
                 <Route path="/tech-starter" element={<TechStarter />} />
+                <Route path="/challenge-detail/:id" element={<ChallengeDetail />} />
                 
                 {/* Protected routes */}
                 <Route path="/dashboard" element={
@@ -74,7 +77,7 @@ const App = () => {
                 } />
                 <Route path="/challenges" element={
                   <ProtectedRoute>
-                    <ChallengeLibrary />
+                    <Challenges />
                   </ProtectedRoute>
                 } />
                 <Route path="/challenge/:id" element={

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -9,6 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
+
+// Import the challenge data map to handle string IDs
+import { challengeData } from "../pages/ChallengeDetail";
 
 interface Challenge {
   id: string;
@@ -24,7 +27,7 @@ interface Sprint {
   description: string;
   category: string;
   difficulty: string;
-  duration: number; // Added this property to fix the TypeScript error
+  duration: number;
 }
 
 const ChallengeView: React.FC = () => {
@@ -34,58 +37,105 @@ const ChallengeView: React.FC = () => {
   const [currentDay, setCurrentDay] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [taskCompleted, setTaskCompleted] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const { user } = useAuth();
+
+  // Helper function to find the UUID from the challenge data map
+  const findSprintIdBySlug = (slug: string): string | null => {
+    // This would be replaced with a proper lookup from your database or mapping
+    // For now just hard-code the mapping for demonstration
+    const sprintMappings: Record<string, string> = {
+      'design-starter': 'd0d766ab-5ca8-45c1-b789-500d132c8710',
+      'web-dev': '08c8f5db-c37e-417d-a6a4-d10c0bb78e52',
+      'freelance-launchpad': '7ead586e-49a1-4ba0-bbeb-97f6cc482170',
+      'personal-brand': '7a8d9d12-441d-4fe8-a9ab-3a40ea4fb2d3',
+      'productivity': '07d5fc8e-a14c-42ee-b7e9-19fb27eb4b56',
+      'freelance-pro': 'd43fed60-f098-42f9-8afc-ba2c19d61b70'
+    };
+
+    return sprintMappings[slug] || null;
+  };
   
   useEffect(() => {
     if (!id || !user) return;
     
     const fetchChallengeData = async () => {
       try {
+        // Check if we need to map a string ID to a UUID
+        const uuidId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) 
+          ? id 
+          : findSprintIdBySlug(id);
+        
+        if (!uuidId) {
+          console.log("Invalid ID format and no mapping found:", id);
+          setNotFound(true);
+          setIsLoading(false);
+          return;
+        }
+        
+        console.log("Fetching sprint with UUID:", uuidId);
+        
         // Fetch sprint details
         const { data: sprintData, error: sprintError } = await supabase
           .from('sprints')
           .select('*')
-          .eq('id', id)
+          .eq('id', uuidId)
           .single();
         
-        if (sprintError) throw sprintError;
-        setSprint(sprintData);
+        if (sprintError) {
+          console.error("Sprint error:", sprintError);
+          if (sprintError.code !== 'PGSQL_NO_ROWS_RETURNED') {
+            throw sprintError;
+          } else {
+            setNotFound(true);
+            setIsLoading(false);
+            return;
+          }
+        }
         
-        // Fetch all challenges for this sprint
-        const { data: challengeData, error: challengeError } = await supabase
-          .from('challenges')
-          .select('*')
-          .eq('sprint_id', id)
-          .order('day', { ascending: true });
-        
-        if (challengeError) throw challengeError;
-        setChallenges(challengeData);
-        
-        // Fetch user progress for this sprint
-        const { data: progressData, error: progressError } = await supabase
-          .from('user_progress')
-          .select('*')
-          .eq('sprint_id', id)
-          .eq('user_id', user.id)
-          .single();
-        
-        if (progressError && progressError.code !== 'PGSQL_NO_ROWS_RETURNED') throw progressError;
-        
-        // Calculate current day
-        if (progressData) {
-          const startDate = new Date(progressData.start_date);
-          const currentDate = new Date();
-          const diffTime = Math.abs(currentDate.getTime() - startDate.getTime());
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          setCurrentDay(Math.min(diffDays, sprintData?.duration || 30));
+        if (sprintData) {
+          setSprint(sprintData);
           
-          // Check if today's task is already completed
-          if (progressData.completed_date) {
-            const lastCompleted = new Date(progressData.completed_date);
-            if (lastCompleted.toDateString() === currentDate.toDateString()) {
-              setTaskCompleted(true);
+          // Fetch all challenges for this sprint
+          const { data: challengeData, error: challengeError } = await supabase
+            .from('challenges')
+            .select('*')
+            .eq('sprint_id', uuidId)
+            .order('day', { ascending: true });
+          
+          if (challengeError) throw challengeError;
+          if (challengeData) setChallenges(challengeData);
+          
+          // Fetch user progress for this sprint
+          if (user) {
+            const { data: progressData, error: progressError } = await supabase
+              .from('user_progress')
+              .select('*')
+              .eq('sprint_id', uuidId)
+              .eq('user_id', user.id)
+              .single();
+            
+            if (progressError && progressError.code !== 'PGSQL_NO_ROWS_RETURNED') throw progressError;
+            
+            // Calculate current day
+            if (progressData) {
+              const startDate = new Date(progressData.start_date);
+              const currentDate = new Date();
+              const diffTime = Math.abs(currentDate.getTime() - startDate.getTime());
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              setCurrentDay(Math.min(diffDays, sprintData?.duration || 30));
+              
+              // Check if today's task is already completed
+              if (progressData.completed_date) {
+                const lastCompleted = new Date(progressData.completed_date);
+                if (lastCompleted.toDateString() === currentDate.toDateString()) {
+                  setTaskCompleted(true);
+                }
+              }
             }
           }
+        } else {
+          setNotFound(true);
         }
       } catch (error) {
         console.error("Error fetching challenge data:", error);
@@ -101,7 +151,7 @@ const ChallengeView: React.FC = () => {
     
     fetchChallengeData();
   }, [id, user]);
-  
+
   const handleMarkComplete = async () => {
     if (!user || !id) return;
     
@@ -197,6 +247,16 @@ const ChallengeView: React.FC = () => {
       return [];
     }
   };
+  
+  // Redirect if not found
+  if (notFound && !isLoading) {
+    toast({
+      title: "Challenge not found",
+      description: "We couldn't find the challenge you're looking for.",
+      variant: "destructive",
+    });
+    return <Navigate to="/challenges" replace />;
+  }
   
   const currentChallenge = getCurrentChallenge();
   const progressPercent = sprint?.duration ? (currentDay / sprint.duration) * 100 : 0;
@@ -295,7 +355,7 @@ const ChallengeView: React.FC = () => {
                               href={resource.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-skillpurple-500 hover:text-skillpurple-600 hover:underline"
+                              className="text-skillpurple-400 hover:text-skillpurple-300 hover:underline"
                             >
                               {resource.title}
                             </a>
