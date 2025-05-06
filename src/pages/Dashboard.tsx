@@ -95,17 +95,29 @@ const Dashboard: React.FC = () => {
           }
         }
         
-        // Fetch user streak
+        // Fetch user streak - MODIFIED: using maybeSingle() instead of single()
         const { data: streakData, error: streakError } = await supabase
           .from('streaks')
           .select('current_streak')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
         
-        if (streakError && streakError.code !== 'PGSQL_NO_ROWS_RETURNED') throw streakError;
+        if (streakError && streakError.code !== 'PGRST116') {
+          // Only throw if it's not the "no rows returned" error
+          throw streakError;
+        }
         
         if (streakData) {
           setStreakDays(streakData.current_streak || 0);
+        } else {
+          // If no streak found, create a new streak record
+          const { error: createError } = await supabase
+            .from('streaks')
+            .insert([{ user_id: user.id, current_streak: 0, longest_streak: 0 }]);
+            
+          if (createError) {
+            console.error("Error creating streak record:", createError);
+          }
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
