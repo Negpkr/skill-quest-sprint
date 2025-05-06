@@ -89,6 +89,14 @@ export default {
 					violet: '#8A2387',
 					indigo: '#512DA8',
 				},
+				// Dark theme colors
+				dark: {
+					background: '#1A1F2C',
+					card: '#221F26',
+					muted: '#403E43',
+					border: '#333333',
+					accent: '#555555',
+				},
 				softgreen: '#F2FCE2',
 				softyellow: '#FEF7CD',
 				softorange: '#FEC6A1',
@@ -158,11 +166,12 @@ export default {
 				'shine': 'shine 8s ease-in-out infinite',
 			},
 			backgroundImage: {
-				'grid-pattern': 'linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)',
+				'grid-pattern': 'linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)',
 				'hero-gradient': 'linear-gradient(to right, #4A00E0, #8E2DE2)',
 				'card-gradient': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
 				'highlight-gradient': 'linear-gradient(45deg, #FF9A9E, #FAD0C4)',
 				'cta-gradient': 'linear-gradient(to right, #FC5C7D, #6A82FB)',
+				'dark-gradient': 'linear-gradient(to bottom, #1A1F2C, #252A3C)',
 			}
 		}
 	},

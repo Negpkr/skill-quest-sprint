@@ -5,49 +5,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    /* Vibrant purple as primary */
-    --primary: 265 85% 65%;
-    --primary-foreground: 0 0% 100%;
-
-    /* Light lavender as secondary */
-    --secondary: 252 16% 95%;
-    --secondary-foreground: 265 75% 50%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 260 60% 95%;
-    --accent-foreground: 265 75% 50%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 265 85% 65%;
-
-    --radius: 1rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
+    /* Switch default to dark mode */
     --background: 240 10% 5%;
     --foreground: 210 40% 98%;
 
@@ -84,6 +42,49 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 240 8% 15%;
     --sidebar-ring: 265 85% 65%;
+    
+    --radius: 1rem;
+  }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Vibrant purple as primary */
+    --primary: 265 85% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Light lavender as secondary */
+    --secondary: 252 16% 95%;
+    --secondary-foreground: 265 75% 50%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 260 60% 95%;
+    --accent-foreground: 265 75% 50%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 265 85% 65%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -137,7 +138,7 @@
   }
   
   .glassy-card {
-    @apply bg-white/30 backdrop-blur-sm border border-white/20 rounded-xl shadow-lg;
+    @apply bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl shadow-lg;
   }
   
   .animated-gradient {
@@ -146,9 +147,13 @@
     animation: gradient 15s ease infinite;
   }
 
-  /* New components for codedex-inspired design */
+  /* New components for codedex-inspired dark design */
   .neo-card {
-    @apply rounded-2xl bg-white border border-gray-100 shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300;
+    @apply rounded-2xl bg-dark-card border border-dark-border shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300;
+  }
+
+  .dark-card {
+    @apply bg-dark-card border border-dark-border rounded-xl overflow-hidden;
   }
 
   .neo-gradient-bg {
@@ -178,8 +183,8 @@
   .bg-grid {
     background-size: 40px 40px;
     background-image: 
-      linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);
+      linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
   }
   
   .animated-circle {
@@ -188,6 +193,10 @@
   
   .triangle {
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+  
+  .dark-glow {
+    box-shadow: 0 0 15px rgba(155, 135, 245, 0.15);
   }
 }
 
@@ -242,6 +251,6 @@
   
   .card-hover-effect:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   }
 }

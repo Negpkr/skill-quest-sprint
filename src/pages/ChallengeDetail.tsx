@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import { ChallengeProps } from "../components/ChallengeCard";
 import { Award, ExternalLink, Book, Rocket } from "lucide-react";
 
-// Sample challenge details data
+// Sample challenge details data with improved images
 const challengeData: Record<string, ChallengeProps & { 
   longDescription: string; 
   syllabus: { title: string; description: string; }[];
@@ -23,7 +23,7 @@ const challengeData: Record<string, ChallengeProps & {
     longDescription: "Perfect for complete beginners, this challenge walks you through the fundamentals of graphic design using Canva - no design experience needed! By the end of 30 days, you'll have created several marketable design templates that you can start selling online.",
     category: "Design",
     difficulty: "Beginner",
-    imageUrl: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000",
+    imageUrl: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?q=80&w=2000",
     resources: [
       { title: "Canva Design School", url: "https://www.canva.com/designschool/" },
       { title: "Canva Beginner Tutorial", url: "https://www.youtube.com/watch?v=oDFM4cLv9_c" },
@@ -59,6 +59,50 @@ const challengeData: Record<string, ChallengeProps & {
       { id: "task8", day: 8, title: "Learn about design grids and alignment", completed: false },
       { id: "task9", day: 9, title: "Create a Pinterest pin template", completed: false },
       { id: "task10", day: 10, title: "Design a simple business card template", completed: false }
+    ]
+  },
+  "web-dev": {
+    id: "web-dev",
+    title: "Web Dev Sprint",
+    description: "Build and launch your first website with HTML, CSS, and basic JavaScript.",
+    longDescription: "This 30-day challenge will take you from zero to launching your first website. You'll learn HTML, CSS, and basic JavaScript, with a focus on practical projects that you can showcase to potential clients or employers.",
+    category: "Tech",
+    difficulty: "Intermediate",
+    imageUrl: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=2000",
+    resources: [
+      { title: "freeCodeCamp HTML Course", url: "https://www.freecodecamp.org/learn/responsive-web-design/" },
+      { title: "GitHub Pages Guide", url: "https://pages.github.com/" },
+      { title: "JavaScript Basics", url: "https://javascript.info/" }
+    ],
+    syllabus: [
+      { 
+        title: "Week 1: HTML Fundamentals", 
+        description: "Learn the basic structure of web pages, tags, and elements." 
+      },
+      { 
+        title: "Week 2: CSS Styling", 
+        description: "Master styling techniques, layouts, and responsive design." 
+      },
+      { 
+        title: "Week 3: JavaScript Basics", 
+        description: "Add interactivity to your site with JavaScript features." 
+      },
+      { 
+        title: "Week 4: Deployment & Optimization", 
+        description: "Launch your site on GitHub Pages and optimize for performance." 
+      }
+    ],
+    tasks: [
+      { id: "task1", day: 1, title: "Set up your development environment", completed: true },
+      { id: "task2", day: 2, title: "Create your first HTML page", completed: true },
+      { id: "task3", day: 3, title: "Add basic elements to your page", completed: false },
+      { id: "task4", day: 4, title: "Create a navigation menu", completed: false },
+      { id: "task5", day: 5, title: "Style your page with CSS", completed: false },
+      { id: "task6", day: 6, title: "Make your design responsive", completed: false },
+      { id: "task7", day: 7, title: "Add your first JavaScript function", completed: false },
+      { id: "task8", day: 8, title: "Create a contact form", completed: false },
+      { id: "task9", day: 9, title: "Set up GitHub account", completed: false },
+      { id: "task10", day: 10, title: "Deploy your site to GitHub Pages", completed: false }
     ]
   },
   // More challenges would be added here...
@@ -97,7 +141,7 @@ const ChallengeDetail: React.FC = () => {
       <motion.div 
         className="relative bg-cover bg-center py-20 overflow-hidden"
         style={{ 
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.5)), url(${challenge.imageUrl})` 
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.7)), url(${challenge.imageUrl})` 
         }}
         initial="hidden"
         animate="visible"
@@ -110,7 +154,7 @@ const ChallengeDetail: React.FC = () => {
         }}
       >
         {/* Overlay with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-neo-purple/70 to-neo-blue/70 mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-neo-purple/50 to-neo-blue/50 mix-blend-multiply"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white relative">
           <div className="flex flex-wrap items-center justify-between">
@@ -150,7 +194,7 @@ const ChallengeDetail: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             {/* About this challenge */}
-            <Card className="border-0 shadow-lg overflow-hidden">
+            <Card className="border-dark-border bg-dark-card shadow-lg overflow-hidden">
               <div className="h-2 bg-gradient-to-r from-neo-purple to-neo-blue"></div>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center">
@@ -159,14 +203,14 @@ const ChallengeDetail: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="mb-6 text-gray-700">{challenge.longDescription}</p>
+                <p className="mb-6 text-muted-foreground">{challenge.longDescription}</p>
                 
-                <h3 className="font-semibold text-xl mb-4 text-gray-800">What You'll Learn</h3>
+                <h3 className="font-semibold text-xl mb-4 text-white">What You'll Learn</h3>
                 <div className="space-y-6">
                   {challenge.syllabus.map((week, index) => (
                     <motion.div 
                       key={index}
-                      className="p-4 border border-gray-100 rounded-lg hover:shadow-md transition-shadow"
+                      className="p-4 border border-dark-border bg-dark-background/50 rounded-lg hover:shadow-md transition-shadow"
                       whileHover={{ y: -5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
@@ -179,7 +223,7 @@ const ChallengeDetail: React.FC = () => {
             </Card>
             
             {/* Task Checklist */}
-            <Card className="border-0 shadow-lg overflow-hidden">
+            <Card className="border-dark-border bg-dark-card shadow-lg overflow-hidden">
               <div className="h-2 bg-gradient-to-r from-neo-green to-neo-teal"></div>
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center">
@@ -192,7 +236,7 @@ const ChallengeDetail: React.FC = () => {
                   {challenge.tasks.map((task) => (
                     <motion.div 
                       key={task.id} 
-                      className={`flex items-start space-x-3 p-3 rounded-lg ${task.completed ? 'bg-green-50' : 'hover:bg-muted'}`}
+                      className={`flex items-start space-x-3 p-3 rounded-lg ${task.completed ? 'bg-green-950/30' : 'hover:bg-dark-muted/30'}`}
                       whileHover={{ x: 5 }}
                     >
                       <Checkbox 
@@ -203,7 +247,7 @@ const ChallengeDetail: React.FC = () => {
                       <div className="space-y-1">
                         <label
                           htmlFor={task.id}
-                          className={`font-medium leading-none cursor-pointer ${task.completed ? "line-through text-muted-foreground" : ""}`}
+                          className={`font-medium leading-none cursor-pointer ${task.completed ? "line-through text-muted-foreground" : "text-white"}`}
                         >
                           <span className="inline-block w-12 text-center mr-2 px-2 py-1 text-xs font-bold rounded-full bg-neo-purple text-white">
                             Day {task.day}
@@ -226,7 +270,7 @@ const ChallengeDetail: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
           >
             {/* Resources */}
-            <Card className="border-0 shadow-lg overflow-hidden">
+            <Card className="border-dark-border bg-dark-card shadow-lg overflow-hidden">
               <div className="h-2 bg-gradient-to-r from-neo-orange to-neo-yellow"></div>
               <CardHeader>
                 <CardTitle className="text-xl">Learning Resources</CardTitle>
@@ -242,9 +286,9 @@ const ChallengeDetail: React.FC = () => {
                         href={resource.url} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-neo-purple hover:text-neo-blue transition-colors flex items-center group"
+                        className="text-skillpurple-400 hover:text-skillpurple-300 transition-colors flex items-center group"
                       >
-                        <ExternalLink className="mr-2 h-4 w-4 text-gray-400 group-hover:text-neo-purple transition-colors" />
+                        <ExternalLink className="mr-2 h-4 w-4 text-gray-400 group-hover:text-skillpurple-400 transition-colors" />
                         <span className="underline underline-offset-4">{resource.title}</span>
                       </a>
                     </motion.li>
@@ -274,12 +318,12 @@ const ChallengeDetail: React.FC = () => {
               whileHover={{ y: -5 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <Card className="border-0 shadow-lg overflow-hidden">
+              <Card className="border-dark-border bg-dark-card shadow-lg overflow-hidden">
                 <CardHeader>
                   <CardTitle className="text-xl">Join the Community</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="mb-4 text-sm">Connect with others taking this challenge to share tips and progress.</p>
+                  <p className="mb-4 text-sm text-muted-foreground">Connect with others taking this challenge to share tips and progress.</p>
                   <Button variant="outline" className="w-full border-neo-purple text-neo-purple hover:bg-neo-purple/10">
                     View Challenge Community
                   </Button>
