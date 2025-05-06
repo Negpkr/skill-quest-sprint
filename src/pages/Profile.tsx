@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +20,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Checkbox } from "@/components/ui/checkbox";
+
+const AVAILABLE_SKILLS = [
+  { id: "design", label: "Design" },
+  { id: "web-development", label: "Web Development" },
+  { id: "content-creation", label: "Content Creation" },
+  { id: "digital-marketing", label: "Digital Marketing" },
+  { id: "copywriting", label: "Copywriting" },
+  { id: "video-editing", label: "Video Editing" },
+  { id: "social-media", label: "Social Media" },
+  { id: "freelancing", label: "Freelancing" },
+  { id: "seo", label: "SEO" },
+  { id: "photography", label: "Photography" }
+];
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -29,7 +43,18 @@ const Profile: React.FC = () => {
     bio: user?.user_metadata?.bio || "",
     avatarUrl: user?.user_metadata?.avatar_url || ""
   });
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(
+    user?.user_metadata?.skills || []
+  );
   const [isLoading, setIsLoading] = useState(false);
+  const [showSkillDialog, setShowSkillDialog] = useState(false);
+  
+  useEffect(() => {
+    // Check if user is new (no skills set) and show skill selection dialog
+    if (user && (!user.user_metadata?.skills || user.user_metadata.skills.length === 0)) {
+      setShowSkillDialog(true);
+    }
+  }, [user]);
   
   const getUserInitials = () => {
     if (!user) return "U";
@@ -55,6 +80,46 @@ const Profile: React.FC = () => {
     });
   };
   
+  const handleSkillToggle = (skillId: string) => {
+    setSelectedSkills(prev => {
+      if (prev.includes(skillId)) {
+        return prev.filter(id => id !== skillId);
+      } else {
+        return [...prev, skillId];
+      }
+    });
+  };
+  
+  const handleSaveSkills = async () => {
+    if (!user) return;
+    setIsLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: { 
+          skills: selectedSkills
+        }
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Skills updated",
+        description: "Your skills have been updated successfully.",
+      });
+      
+      setShowSkillDialog(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update skills. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -64,7 +129,8 @@ const Profile: React.FC = () => {
         data: { 
           full_name: formData.fullName,
           bio: formData.bio,
-          avatar_url: formData.avatarUrl
+          avatar_url: formData.avatarUrl,
+          skills: selectedSkills
         }
       });
       
@@ -137,11 +203,30 @@ const Profile: React.FC = () => {
                   
                   <div>
                     <h3 className="text-sm font-medium">Skills</h3>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <Badge variant="secondary">Design</Badge>
-                      <Badge variant="secondary">Web Development</Badge>
-                      <Badge variant="secondary">Freelancing</Badge>
-                    </div>
+                    {selectedSkills && selectedSkills.length > 0 ? (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {selectedSkills.map(skillId => {
+                          const skill = AVAILABLE_SKILLS.find(s => s.id === skillId);
+                          return (
+                            <Badge key={skillId} variant="secondary">
+                              {skill?.label || skillId}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        No skills selected
+                      </p>
+                    )}
+                    
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto text-skillpurple-500 mt-2"
+                      onClick={() => setShowSkillDialog(true)}
+                    >
+                      {selectedSkills.length > 0 ? "Edit skills" : "Add skills"}
+                    </Button>
                   </div>
                   
                   {user?.user_metadata?.bio && (
@@ -234,63 +319,6 @@ const Profile: React.FC = () => {
                       </Button>
                     </div>
                   </div>
-                  
-                  <div className="border rounded-md p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium">Freelance Launchpad</h3>
-                        <p className="text-sm text-muted-foreground">Day 5 of 30</p>
-                      </div>
-                      <Badge className="bg-softgreen text-green-800">16% Complete</Badge>
-                    </div>
-                    <div className="mt-4 w-full bg-gray-200 rounded-full h-2.5">
-                      <div className="bg-skillpurple-400 h-2.5 rounded-full" style={{ width: "16%" }}></div>
-                    </div>
-                    <div className="mt-4">
-                      <Button size="sm" asChild>
-                        <Link to="/challenge/freelance-starter">Continue</Link>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Skill Progress</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <h3 className="text-sm font-medium">Design</h3>
-                      <span className="text-sm text-muted-foreground">65%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div className="bg-purple-500 h-2.5 rounded-full" style={{ width: "65%" }}></div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <h3 className="text-sm font-medium">Web Development</h3>
-                      <span className="text-sm text-muted-foreground">40%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div className="bg-blue-500 h-2.5 rounded-full" style={{ width: "40%" }}></div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <h3 className="text-sm font-medium">Freelancing</h3>
-                      <span className="text-sm text-muted-foreground">25%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div className="bg-green-500 h-2.5 rounded-full" style={{ width: "25%" }}></div>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
               <CardFooter>
@@ -302,6 +330,40 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Skills Selection Dialog */}
+      <Dialog open={showSkillDialog} onOpenChange={setShowSkillDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Select Your Skills</DialogTitle>
+            <DialogDescription>
+              Choose the skills you're interested in or already have. This helps us personalize your experience.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-2 gap-3 py-4">
+            {AVAILABLE_SKILLS.map((skill) => (
+              <div key={skill.id} className="flex items-center space-x-2">
+                <Checkbox 
+                  id={`skill-${skill.id}`}
+                  checked={selectedSkills.includes(skill.id)}
+                  onCheckedChange={() => handleSkillToggle(skill.id)}
+                />
+                <label 
+                  htmlFor={`skill-${skill.id}`}
+                  className="text-sm font-medium leading-none cursor-pointer"
+                >
+                  {skill.label}
+                </label>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button onClick={handleSaveSkills} disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Skills"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

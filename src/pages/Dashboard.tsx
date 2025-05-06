@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-import { Flame, Calendar as CalendarIcon } from "lucide-react";
+import { Flame } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -79,7 +79,7 @@ const Dashboard: React.FC = () => {
           
           if (challengesError) throw challengesError;
           
-          if (challenges) {
+          if (challenges && challenges.length > 0) {
             setTodaysTasks(challenges.map(challenge => ({
               id: challenge.id,
               title: challenge.title,
@@ -121,18 +121,12 @@ const Dashboard: React.FC = () => {
         task.id === taskId ? { ...task, completed: !task.completed } : task
       )
     );
-    
-    // In a real implementation, this would update the task completion in the database
-    // and potentially update the user's streak
   };
   
   const handleMarkAllComplete = async () => {
     setTodaysTasks(tasks => 
       tasks.map(task => ({ ...task, completed: true }))
     );
-    
-    // In a real implementation, this would update all tasks as completed in the database
-    // and update the user's streak
   };
   
   // Generate calendar days
@@ -308,41 +302,6 @@ const Dashboard: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-              
-              {/* Side Hustle Progress */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Side Hustle Progress</CardTitle>
-                  <CardDescription>Track your earning goals</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>First Income Goal</span>
-                      <span>$0 / $50</span>
-                    </div>
-                    <Progress value={0} className="h-2" />
-                  </div>
-                  
-                  <Button asChild variant="outline" className="w-full">
-                    <Link to="/hustle-tracker">Update Progress</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              {/* Public Templates */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Public Templates</CardTitle>
-                  <CardDescription>Resources to help you launch</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <Button variant="secondary" className="w-full">Fiverr Gig Description</Button>
-                  <Button variant="secondary" className="w-full">Portfolio Layout</Button>
-                  <Button variant="secondary" className="w-full">Canva Design Templates</Button>
-                  <Button variant="link" className="w-full">Browse All Resources</Button>
                 </CardContent>
               </Card>
             </div>
