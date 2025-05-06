@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,9 +7,29 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: user?.user_metadata?.full_name || "",
+    bio: user?.user_metadata?.bio || "",
+    avatarUrl: user?.user_metadata?.avatar_url || ""
+  });
+  const [isLoading, setIsLoading] = useState(false);
   
   const getUserInitials = () => {
     if (!user) return "U";
@@ -25,6 +45,46 @@ const Profile: React.FC = () => {
     }
     
     return user.email?.substring(0, 2).toUpperCase() || "U";
+  };
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: { 
+          full_name: formData.fullName,
+          bio: formData.bio,
+          avatar_url: formData.avatarUrl
+        }
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Profile updated",
+        description: "Your profile information has been updated successfully.",
+      });
+      
+      setIsEditing(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
@@ -83,10 +143,69 @@ const Profile: React.FC = () => {
                       <Badge variant="secondary">Freelancing</Badge>
                     </div>
                   </div>
+                  
+                  {user?.user_metadata?.bio && (
+                    <div>
+                      <h3 className="text-sm font-medium">Bio</h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {user.user_metadata.bio}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full">Edit Profile</Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="w-full">Edit Profile</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Edit Profile</DialogTitle>
+                      <DialogDescription>
+                        Make changes to your profile information here.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmit}>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="fullName">Full Name</Label>
+                          <Input
+                            id="fullName"
+                            name="fullName"
+                            value={formData.fullName}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="bio">Bio</Label>
+                          <Input
+                            id="bio"
+                            name="bio"
+                            value={formData.bio}
+                            onChange={handleInputChange}
+                            placeholder="Tell us about yourself"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="avatarUrl">Avatar URL</Label>
+                          <Input
+                            id="avatarUrl"
+                            name="avatarUrl"
+                            value={formData.avatarUrl}
+                            onChange={handleInputChange}
+                            placeholder="https://example.com/avatar.jpg"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit" disabled={isLoading}>
+                          {isLoading ? "Saving..." : "Save changes"}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </CardFooter>
             </Card>
           </div>
@@ -174,6 +293,11 @@ const Profile: React.FC = () => {
                   </div>
                 </div>
               </CardContent>
+              <CardFooter>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link to="/start-sprint">Add New Sprint</Link>
+                </Button>
+              </CardFooter>
             </Card>
           </div>
         </div>

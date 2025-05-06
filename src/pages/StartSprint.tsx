@@ -6,14 +6,59 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
+import AIPromptFlow from "../components/AIPromptFlow";
 
 const StartSprint: React.FC = () => {
   const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
+  const [customSkill, setCustomSkill] = useState("");
+  const [showAIPrompt, setShowAIPrompt] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
   
-  const handleStartSprint = () => {
-    if (selectedSprint) {
-      navigate(`/challenge/${selectedSprint}`);
+  const handleStartSprint = async () => {
+    if (!selectedSprint || !user) return;
+    
+    setIsLoading(true);
+    
+    try {
+      if (selectedSprint === 'custom') {
+        // Show AI prompt flow for custom skill
+        setShowAIPrompt(true);
+      } else {
+        // Add selected pre-defined sprint to user progress
+        const { error } = await supabase
+          .from('user_progress')
+          .insert([
+            { 
+              user_id: user.id,
+              sprint_id: selectedSprint,
+              start_date: new Date().toISOString(),
+              completed: false
+            }
+          ]);
+          
+        if (error) throw error;
+        
+        toast({
+          title: "Sprint added!",
+          description: "The sprint has been added to your dashboard.",
+        });
+        
+        navigate(`/challenge/${selectedSprint}`);
+      }
+    } catch (error: any) {
+      console.error("Error starting sprint:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to start sprint. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -34,6 +79,10 @@ const StartSprint: React.FC = () => {
       description: "Set up your freelance business and land your first client"
     }
   ];
+
+  if (showAIPrompt) {
+    return <AIPromptFlow skill={customSkill} onComplete={() => navigate("/dashboard")} />;
+  }
 
   return (
     <Layout>
@@ -78,6 +127,8 @@ const StartSprint: React.FC = () => {
                     id="customSkill" 
                     placeholder="E.g., Photography, Podcast Creation, Python Programming, etc."
                     className="mt-1"
+                    value={customSkill}
+                    onChange={(e) => setCustomSkill(e.target.value)}
                   />
                 </div>
               </CardContent>
@@ -87,10 +138,10 @@ const StartSprint: React.FC = () => {
           <div className="flex justify-end mt-8">
             <Button 
               onClick={handleStartSprint}
-              disabled={!selectedSprint}
+              disabled={!selectedSprint || isLoading}
               className="bg-skillpurple-400 hover:bg-skillpurple-500"
             >
-              Start My 30-Day Sprint
+              {isLoading ? "Starting..." : "Start My 30-Day Sprint"}
             </Button>
           </div>
         </div>
