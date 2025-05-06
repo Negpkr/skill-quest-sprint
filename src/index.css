@@ -9,7 +9,7 @@
 
 @layer base {
   :root {
-    /* Enhanced dark mode with blue theme */
+    /* Enhanced dark mode with better navy blues */
     --background: 225 18% 10%;
     --foreground: 210 40% 98%;
 
@@ -19,7 +19,7 @@
     --popover: 222 20% 12%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 212 100% 60%;
+    --primary: 215 76% 44%;
     --primary-foreground: 240 10% 5%;
 
     --secondary: 240 8% 15%;
@@ -28,7 +28,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 210 40% 20%;
+    --accent: 210 50% 20%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -36,16 +36,16 @@
 
     --border: 240 8% 15%;
     --input: 240 8% 15%;
-    --ring: 212 100% 60%;
+    --ring: 215 76% 44%;
 
     --sidebar-background: 240 10% 7%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 212 100% 60%;
+    --sidebar-primary: 215 76% 44%;
     --sidebar-primary-foreground: 240 10% 5%;
     --sidebar-accent: 240 8% 15%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 240 8% 15%;
-    --sidebar-ring: 212 100% 60%;
+    --sidebar-ring: 215 76% 44%;
     
     --radius: 1rem;
   }
@@ -60,26 +60,26 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Vibrant blue as primary */
-    --primary: 212 100% 60%;
+    /* Vibrant navy as primary */
+    --primary: 215 76% 44%;
     --primary-foreground: 0 0% 100%;
 
-    /* Light blue as secondary */
-    --secondary: 210 40% 95%;
-    --secondary-foreground: 212 100% 50%;
+    /* Light navy as secondary */
+    --secondary: 210 33% 95%;
+    --secondary-foreground: 215 76% 44%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 95%;
-    --accent-foreground: 212 100% 50%;
+    --accent: 210 60% 95%;
+    --accent-foreground: 215 76% 44%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 212 100% 60%;
+    --ring: 215 76% 44%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -112,8 +112,8 @@
   
   .glow-shadow {
     box-shadow: 
-      0 0 15px rgba(51, 146, 255, 0.3),
-      0 0 30px rgba(51, 146, 255, 0.2);
+      0 0 15px rgba(26, 107, 199, 0.3),
+      0 0 30px rgba(26, 107, 199, 0.2);
   }
   
   .pixel-border {
@@ -138,7 +138,7 @@
   
   .gradient-card {
     @apply relative overflow-hidden rounded-xl;
-    background: linear-gradient(120deg, #23accc 0%, #3392ff 100%);
+    background: linear-gradient(120deg, #3388df 0%, #1a6bc7 100%);
   }
   
   .glassy-card {
@@ -146,12 +146,12 @@
   }
   
   .animated-gradient {
-    background: linear-gradient(-45deg, #3392ff, #23accc, #0a4d68, #2ae0b0);
+    background: linear-gradient(-45deg, #1a6bc7, #3388df, #23a6d5, #23d5ab);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
   }
 
-  /* New components for dark design with blue theme */
+  /* New components for codedex-inspired dark design */
   .neo-card {
     @apply rounded-2xl bg-dark-card border border-dark-border shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300;
   }
@@ -161,14 +161,14 @@
   }
 
   .neo-gradient-bg {
-    background: linear-gradient(to right, #0a4d68, #23accc);
+    background: linear-gradient(to right, #1a6bc7, #3d5afa);
+  }
+  
+  .neo-gradient-navy {
+    background: linear-gradient(to right, #1a6bc7, #3388df);
   }
   
   .neo-gradient-blue {
-    background: linear-gradient(to right, #3392ff, #0a4d68);
-  }
-  
-  .neo-gradient-cyan {
     background: linear-gradient(to right, #23accc, #57d4f4);
   }
   
@@ -181,7 +181,7 @@
   }
   
   .neo-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-neo-blue to-neo-cyan;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-neo-navy to-neo-blue;
   }
   
   .bg-grid {
@@ -200,7 +200,12 @@
   }
   
   .dark-glow {
-    box-shadow: 0 0 15px rgba(51, 146, 255, 0.15);
+    box-shadow: 0 0 15px rgba(26, 107, 199, 0.15);
+  }
+  
+  .floating-particle {
+    @apply absolute rounded-full opacity-70;
+    animation: float 6s ease-in-out infinite;
   }
 }
 
@@ -246,7 +251,7 @@
   }
   
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-skillnavy-400;
   }
   
   .card-hover-effect {

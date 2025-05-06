@@ -63,30 +63,30 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Removed skillpurple colors and replaced with skillblue
-				skillblue: {
-					50: '#e6f1ff',
-					100: '#cce3ff',
-					200: '#99c8ff',
-					300: '#66adff',
-					400: '#3392ff', // Enhanced primary blue
-					500: '#0077ff',
-					600: '#0062cc',
-					700: '#004d99',
+				skillnavy: {
+					50: '#e6f0fb',
+					100: '#cce1f7',
+					200: '#99c4ef',
+					300: '#66a6e7',
+					400: '#3388df', // Enhanced primary navy
+					500: '#1a6bc7',
+					600: '#14559f',
+					700: '#104077',
 				},
-				// Enhanced neon colors for dark theme - changed purple to various blues
+				// Enhanced neon colors for dark theme with navy as primary
 				neo: {
-					blue: '#3392ff', // Main blue
-					cyan: '#23accc',
-					teal: '#057b94',
-					navy: '#0a4d68', // Deep navy blue
-					indigo: '#173966',
+					navy: '#1a6bc7', // Primary navy blue
+					blue: '#3388df', // Secondary navy blue
+					teal: '#23accc',
+					cyan: '#57d4f4',
 					green: '#2ae0b0',
 					lime: '#95f2b8',
 					orange: '#ff7a59',
 					yellow: '#ffcc41',
 					pink: '#ff5792',
 					red: '#ff4570',
+					violet: '#3d5afa',
+					indigo: '#3d5afa',
 				},
 				// Dark theme colors - slightly adjusted
 				dark: {
@@ -99,19 +99,19 @@ export default {
 				softgreen: '#F2FCE2',
 				softyellow: '#FEF7CD',
 				softorange: '#FEC6A1',
-				softblue: '#D3E4FD', // Kept as is
+				softnavy: '#D3E4FD',
 				softpink: '#FFDEE2',
 				softpeach: '#FDE1D3',
-				// Added new
-				softnavyblue: '#E5ECF5',
+				softblue: '#D3E4FD',
 				softgray: '#F1F0FB',
 				// Vibrant versions - made more neon for dark theme
 				vibrant: {
 					green: '#00F260',
 					yellow: '#FFDD00',
 					orange: '#FF9900',
-					blue: '#0077ff', // Enhanced blue
-					navy: '#0a4d68', // Deep navy
+					navy: '#1a6bc7', // Enhanced navy
+					blue: '#3388df', // Enhanced blue
+					peach: '#FF7E5F',
 					cyan: '#00FFFF',
 				}
 			},
@@ -149,17 +149,29 @@ export default {
 				'pulse-glow': {
 					'0%, 100%': { 
 						opacity: 1,
-						boxShadow: '0 0 20px rgba(51, 146, 255, 0.5)' // Changed to blue glow
+						boxShadow: '0 0 20px rgba(26, 107, 199, 0.5)'
 					},
 					'50%': { 
 						opacity: 0.8,
-						boxShadow: '0 0 40px rgba(51, 146, 255, 0.8)' // Changed to blue glow
+						boxShadow: '0 0 40px rgba(26, 107, 199, 0.8)'
 					},
 				},
 				'shine': {
 					'0%': { backgroundPosition: '200% center' },
 					'100%': { backgroundPosition: '-200% center' },
-				}
+				},
+				'orbit': {
+					'0%': { transform: 'rotate(0deg) translateX(10px) rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg) translateX(10px) rotate(-360deg)' },
+				},
+				'bounce-slow': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' },
+				},
+				'spin-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -167,13 +179,16 @@ export default {
 				'float': 'float 5s ease-in-out infinite',
 				'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
 				'shine': 'shine 8s ease-in-out infinite',
+				'orbit': 'orbit 8s linear infinite',
+				'bounce-slow': 'bounce-slow 3s ease-in-out infinite',
+				'spin-slow': 'spin-slow 10s linear infinite',
 			},
 			backgroundImage: {
 				'grid-pattern': 'linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)',
-				'hero-gradient': 'linear-gradient(to right, #0a4d68, #23accc)',
-				'card-gradient': 'linear-gradient(135deg, #173966 0%, #3392ff 100%)',
-				'highlight-gradient': 'linear-gradient(45deg, #3392ff, #23accc)',
-				'cta-gradient': 'linear-gradient(to right, #0a4d68, #3392ff)',
+				'hero-gradient': 'linear-gradient(to right, #1a6bc7, #3d5afa)',
+				'card-gradient': 'linear-gradient(135deg, #1a6bc7 0%, #3d5afa 100%)',
+				'highlight-gradient': 'linear-gradient(45deg, #3388df, #57d4f4)',
+				'cta-gradient': 'linear-gradient(to right, #1a6bc7, #3388df)',
 				'dark-gradient': 'linear-gradient(to bottom, #1A1F2C, #252A3C)',
 			}
 		}
