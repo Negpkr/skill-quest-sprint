@@ -7,11 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChallengeProps } from "../components/ChallengeCard";
+import { ChallengeProps } from "@/components/ChallengeCard";
 import { Award, ExternalLink, Book, Rocket } from "lucide-react";
 
-// Sample challenge details data with improved images
-const challengeData: Record<string, ChallengeProps & { 
+// Sample challenge details data with improved images - now exported
+export const challengeData: Record<string, ChallengeProps & { 
   longDescription: string; 
   syllabus: { title: string; description: string; }[];
   tasks: { id: string; day: number; title: string; completed: boolean; }[];

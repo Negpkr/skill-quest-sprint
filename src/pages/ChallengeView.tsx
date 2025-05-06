@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { useParams, Navigate } from "react-router-dom";
@@ -9,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
+import { challengeData } from "../pages/ChallengeDetail";
 
 // Define a mapping for string IDs to UUIDs for compatibility with mock data
 const idToUuidMap: Record<string, string> = {
