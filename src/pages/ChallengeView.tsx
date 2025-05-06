@@ -7,10 +7,14 @@ import ChallengeHeader from "@/components/challenge/ChallengeHeader";
 import ChallengeBody from "@/components/challenge/ChallengeBody";
 import ChallengeResources from "@/components/challenge/ChallengeResources";
 import ChallengeLoading from "@/components/challenge/ChallengeLoading";
+import StreakDisplay from "@/components/challenge/StreakDisplay";
 import { useChallenge } from "@/hooks/useChallenge";
+import { useStreakData } from "@/hooks/useStreakData";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ChallengeView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const { 
     sprint, 
     challenges, 
@@ -22,6 +26,8 @@ const ChallengeView: React.FC = () => {
     getCurrentChallenge, 
     parseResources 
   } = useChallenge(id);
+  
+  const { streakDays, isLoading: isStreakLoading } = useStreakData(user?.id);
   
   // Redirect if not found
   if (notFound && !isLoading) {
@@ -59,7 +65,12 @@ const ChallengeView: React.FC = () => {
               />
             </div>
             
-            <div>
+            <div className="space-y-6">
+              <StreakDisplay 
+                streakDays={streakDays} 
+                isLoading={isStreakLoading}
+              />
+              
               <ChallengeResources 
                 currentChallenge={currentChallenge}
                 sprint={sprint}
