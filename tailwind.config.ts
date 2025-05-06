@@ -63,31 +63,30 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Updated purples for better matching with dark theme
-				skillpurple: {
-					50: '#f3effb',
-					100: '#e9e1f8',
-					200: '#d4c3f0',
-					300: '#b99de5',
-					400: '#a87cdd', // Enhanced primary purple
-					500: '#9164d6',
-					600: '#7e4bc8',
-					700: '#6a3ca9',
+				// Removed skillpurple colors and replaced with skillblue
+				skillblue: {
+					50: '#e6f1ff',
+					100: '#cce3ff',
+					200: '#99c8ff',
+					300: '#66adff',
+					400: '#3392ff', // Enhanced primary blue
+					500: '#0077ff',
+					600: '#0062cc',
+					700: '#004d99',
 				},
-				// Enhanced neon colors for dark theme
+				// Enhanced neon colors for dark theme - changed purple to various blues
 				neo: {
-					purple: '#a87cdd', // Made more vibrant
-					blue: '#4e62e9', // More saturated
-					teal: '#23accc',
-					cyan: '#57d4f4',
+					blue: '#3392ff', // Main blue
+					cyan: '#23accc',
+					teal: '#057b94',
+					navy: '#0a4d68', // Deep navy blue
+					indigo: '#173966',
 					green: '#2ae0b0',
 					lime: '#95f2b8',
 					orange: '#ff7a59',
 					yellow: '#ffcc41',
 					pink: '#ff5792',
 					red: '#ff4570',
-					violet: '#9d5bdb',
-					indigo: '#6964e9',
 				},
 				// Dark theme colors - slightly adjusted
 				dark: {
@@ -100,20 +99,19 @@ export default {
 				softgreen: '#F2FCE2',
 				softyellow: '#FEF7CD',
 				softorange: '#FEC6A1',
-				softpurple: '#E5DEFF',
+				softblue: '#D3E4FD', // Kept as is
 				softpink: '#FFDEE2',
 				softpeach: '#FDE1D3',
-				softblue: '#D3E4FD',
+				// Added new
+				softnavyblue: '#E5ECF5',
 				softgray: '#F1F0FB',
 				// Vibrant versions - made more neon for dark theme
 				vibrant: {
 					green: '#00F260',
 					yellow: '#FFDD00',
 					orange: '#FF9900',
-					purple: '#b87fff', // Enhanced purple
-					pink: '#ff66c4', // Enhanced pink
-					peach: '#FF7E5F',
-					blue: '#3891ff', // Enhanced blue
+					blue: '#0077ff', // Enhanced blue
+					navy: '#0a4d68', // Deep navy
 					cyan: '#00FFFF',
 				}
 			},
@@ -151,11 +149,11 @@ export default {
 				'pulse-glow': {
 					'0%, 100%': { 
 						opacity: 1,
-						boxShadow: '0 0 20px rgba(155, 135, 245, 0.5)'
+						boxShadow: '0 0 20px rgba(51, 146, 255, 0.5)' // Changed to blue glow
 					},
 					'50%': { 
 						opacity: 0.8,
-						boxShadow: '0 0 40px rgba(155, 135, 245, 0.8)'
+						boxShadow: '0 0 40px rgba(51, 146, 255, 0.8)' // Changed to blue glow
 					},
 				},
 				'shine': {
@@ -172,10 +170,10 @@ export default {
 			},
 			backgroundImage: {
 				'grid-pattern': 'linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)',
-				'hero-gradient': 'linear-gradient(to right, #4A00E0, #8E2DE2)',
-				'card-gradient': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-				'highlight-gradient': 'linear-gradient(45deg, #FF9A9E, #FAD0C4)',
-				'cta-gradient': 'linear-gradient(to right, #FC5C7D, #6A82FB)',
+				'hero-gradient': 'linear-gradient(to right, #0a4d68, #23accc)',
+				'card-gradient': 'linear-gradient(135deg, #173966 0%, #3392ff 100%)',
+				'highlight-gradient': 'linear-gradient(45deg, #3392ff, #23accc)',
+				'cta-gradient': 'linear-gradient(to right, #0a4d68, #3392ff)',
 				'dark-gradient': 'linear-gradient(to bottom, #1A1F2C, #252A3C)',
 			}
 		}

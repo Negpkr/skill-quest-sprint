@@ -15,7 +15,7 @@ const DashboardHeader: React.FC = () => {
   }));
 
   return (
-    <div className="bg-gradient-to-r from-dark-background via-neo-purple/20 to-neo-blue/20 py-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden rounded-lg shadow-lg">
+    <div className="bg-gradient-to-r from-dark-background via-neo-blue/20 to-neo-cyan/20 py-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden rounded-lg shadow-lg">
       {/* Animated floating elements */}
       <div className="absolute inset-0 opacity-20">
         {floatingElements.map((el) => (
@@ -45,7 +45,7 @@ const DashboardHeader: React.FC = () => {
           <div className="flex justify-center items-center mb-4">
             <div className="relative">
               <div className="absolute -inset-1 rounded-full bg-white/30 blur-md animate-pulse"></div>
-              <div className="bg-gradient-to-br from-neo-violet via-neo-purple to-neo-blue p-4 rounded-full relative">
+              <div className="bg-gradient-to-br from-neo-blue via-neo-cyan to-neo-indigo p-4 rounded-full relative">
                 <Sparkles className="text-white h-8 w-8" />
               </div>
             </div>
@@ -58,11 +58,11 @@ const DashboardHeader: React.FC = () => {
           {/* Visual indicators */}
           <div className="flex justify-center items-center mt-6 space-x-6">
             <div className="flex items-center bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
-              <Star className="text-yellow-300 h-5 w-5 mr-2" />
+              <Star className="text-blue-300 h-5 w-5 mr-2" />
               <span className="text-white font-medium font-sans">Build Skills Daily</span>
             </div>
             <div className="flex items-center bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
-              <Rocket className="text-orange-300 h-5 w-5 mr-2" />
+              <Rocket className="text-cyan-300 h-5 w-5 mr-2" />
               <span className="text-white font-medium font-sans">Launch Your Hustle</span>
             </div>
           </div>

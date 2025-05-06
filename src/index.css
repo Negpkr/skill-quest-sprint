@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
@@ -8,7 +9,7 @@
 
 @layer base {
   :root {
-    /* Enhanced dark mode with better purples */
+    /* Enhanced dark mode with blue theme */
     --background: 225 18% 10%;
     --foreground: 210 40% 98%;
 
@@ -18,7 +19,7 @@
     --popover: 222 20% 12%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 265 60% 67%;
+    --primary: 212 100% 60%;
     --primary-foreground: 240 10% 5%;
 
     --secondary: 240 8% 15%;
@@ -27,7 +28,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 260 30% 20%;
+    --accent: 210 40% 20%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -35,16 +36,16 @@
 
     --border: 240 8% 15%;
     --input: 240 8% 15%;
-    --ring: 265 65% 65%;
+    --ring: 212 100% 60%;
 
     --sidebar-background: 240 10% 7%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 265 70% 65%;
+    --sidebar-primary: 212 100% 60%;
     --sidebar-primary-foreground: 240 10% 5%;
     --sidebar-accent: 240 8% 15%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 240 8% 15%;
-    --sidebar-ring: 265 70% 65%;
+    --sidebar-ring: 212 100% 60%;
     
     --radius: 1rem;
   }
@@ -59,26 +60,26 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Vibrant purple as primary */
-    --primary: 265 85% 65%;
+    /* Vibrant blue as primary */
+    --primary: 212 100% 60%;
     --primary-foreground: 0 0% 100%;
 
-    /* Light lavender as secondary */
-    --secondary: 252 16% 95%;
-    --secondary-foreground: 265 75% 50%;
+    /* Light blue as secondary */
+    --secondary: 210 40% 95%;
+    --secondary-foreground: 212 100% 50%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 260 60% 95%;
-    --accent-foreground: 265 75% 50%;
+    --accent: 210 40% 95%;
+    --accent-foreground: 212 100% 50%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 265 85% 65%;
+    --ring: 212 100% 60%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -111,8 +112,8 @@
   
   .glow-shadow {
     box-shadow: 
-      0 0 15px rgba(159, 122, 234, 0.3),
-      0 0 30px rgba(159, 122, 234, 0.2);
+      0 0 15px rgba(51, 146, 255, 0.3),
+      0 0 30px rgba(51, 146, 255, 0.2);
   }
   
   .pixel-border {
@@ -137,7 +138,7 @@
   
   .gradient-card {
     @apply relative overflow-hidden rounded-xl;
-    background: linear-gradient(120deg, #a6c0fe 0%, #f68084 100%);
+    background: linear-gradient(120deg, #23accc 0%, #3392ff 100%);
   }
   
   .glassy-card {
@@ -145,12 +146,12 @@
   }
   
   .animated-gradient {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background: linear-gradient(-45deg, #3392ff, #23accc, #0a4d68, #2ae0b0);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
   }
 
-  /* New components for codedex-inspired dark design */
+  /* New components for dark design with blue theme */
   .neo-card {
     @apply rounded-2xl bg-dark-card border border-dark-border shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300;
   }
@@ -160,14 +161,14 @@
   }
 
   .neo-gradient-bg {
-    background: linear-gradient(to right, #9d5bdb, #6964e9);
-  }
-  
-  .neo-gradient-purple {
-    background: linear-gradient(to right, #a87cdd, #7e4bc8);
+    background: linear-gradient(to right, #0a4d68, #23accc);
   }
   
   .neo-gradient-blue {
+    background: linear-gradient(to right, #3392ff, #0a4d68);
+  }
+  
+  .neo-gradient-cyan {
     background: linear-gradient(to right, #23accc, #57d4f4);
   }
   
@@ -180,7 +181,7 @@
   }
   
   .neo-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-neo-purple to-neo-blue;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-neo-blue to-neo-cyan;
   }
   
   .bg-grid {
@@ -199,7 +200,7 @@
   }
   
   .dark-glow {
-    box-shadow: 0 0 15px rgba(155, 135, 245, 0.15);
+    box-shadow: 0 0 15px rgba(51, 146, 255, 0.15);
   }
 }
 
@@ -245,7 +246,7 @@
   }
   
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500;
   }
   
   .card-hover-effect {
