@@ -5,13 +5,29 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Challenges from "./pages/Challenges";
-import ChallengeDetail from "./pages/ChallengeDetail";
-import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
-import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
+import Practice from "./pages/Practice";
+import ChallengeView from "./pages/ChallengeView";
+import ChallengeLibrary from "./pages/ChallengeLibrary";
+import Signup from "./pages/Signup";
+import Build from "./pages/Build";
+import Community from "./pages/Community";
+import Pricing from "./pages/Pricing";
+import Blog from "./pages/Blog";
+import Contact from "./pages/Contact";
+import FAQ from "./pages/FAQ";
+import HelpCenter from "./pages/HelpCenter";
+import ReportProblem from "./pages/ReportProblem";
+import DesignBasics from "./pages/learn/DesignBasics";
+import Freelancing101 from "./pages/learn/Freelancing101";
+import TechStarter from "./pages/learn/TechStarter";
+import StartSprint from "./pages/StartSprint";
+import LearnCategoryPage from "./pages/learn/LearnCategoryPage";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -20,18 +36,67 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/challenges" element={<Challenges />} />
-          <Route path="/challenge/:id" element={<ChallengeDetail />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/help" element={<HelpCenter />} />
+            <Route path="/report" element={<ReportProblem />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/learn/:category" element={<LearnCategoryPage />} />
+            <Route path="/design-basics" element={<DesignBasics />} />
+            <Route path="/freelancing-101" element={<Freelancing101 />} />
+            <Route path="/tech-starter" element={<TechStarter />} />
+            
+            {/* Protected routes */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/practice" element={
+              <ProtectedRoute>
+                <Practice />
+              </ProtectedRoute>
+            } />
+            <Route path="/challenges" element={
+              <ProtectedRoute>
+                <ChallengeLibrary />
+              </ProtectedRoute>
+            } />
+            <Route path="/challenge/:id" element={
+              <ProtectedRoute>
+                <ChallengeView />
+              </ProtectedRoute>
+            } />
+            <Route path="/build" element={
+              <ProtectedRoute>
+                <Build />
+              </ProtectedRoute>
+            } />
+            <Route path="/community" element={
+              <ProtectedRoute>
+                <Community />
+              </ProtectedRoute>
+            } />
+            <Route path="/start-sprint" element={
+              <ProtectedRoute>
+                <StartSprint />
+              </ProtectedRoute>
+            } />
+            
+            {/* 404 route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

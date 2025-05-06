@@ -1,16 +1,133 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 const Signup: React.FC = () => {
-  const handleSubmit = (event: React.FormEvent) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/dashboard');
+      }
+    };
+    checkUser();
+  }, [navigate]);
+
+  const handleEmailSignup = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Handle signup logic here (in a real app)
-    console.log("Sign up button clicked");
+    setLoading(true);
+    
+    if (password.length < 6) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 6 characters",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name
+          },
+          emailRedirectTo: `${window.location.origin}/login`
+        }
+      });
+
+      if (error) {
+        toast({
+          title: "Sign up failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Sign up successful",
+          description: "Please check your email to confirm your account.",
+          duration: 5000,
+        });
+        navigate("/login");
+      }
+    } catch (err) {
+      toast({
+        title: "An unexpected error occurred",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+      console.error("Signup error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      });
+
+      if (error) {
+        toast({
+          title: "Google sign up failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "An unexpected error occurred",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+      console.error("Google signup error:", err);
+    }
+  };
+
+  const handleGithubSignup = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      });
+
+      if (error) {
+        toast({
+          title: "GitHub sign up failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "An unexpected error occurred",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+      console.error("GitHub signup error:", err);
+    }
   };
 
   return (
@@ -42,7 +159,12 @@ const Signup: React.FC = () => {
           
           <div className="mt-8">
             <div className="space-y-4">
-              <Button variant="outline" className="w-full flex items-center justify-center space-x-2 py-5">
+              <Button 
+                variant="outline" 
+                className="w-full flex items-center justify-center space-x-2 py-5"
+                onClick={handleGoogleSignup}
+                disabled={loading}
+              >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -52,7 +174,12 @@ const Signup: React.FC = () => {
                 <span>Sign up with Google</span>
               </Button>
               
-              <Button variant="outline" className="w-full flex items-center justify-center space-x-2 py-5">
+              <Button 
+                variant="outline" 
+                className="w-full flex items-center justify-center space-x-2 py-5"
+                onClick={handleGithubSignup}
+                disabled={loading}
+              >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fillRule="evenodd" clipRule="evenodd" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" fill="#000"/>
                 </svg>
@@ -72,27 +199,57 @@ const Signup: React.FC = () => {
                 </div>
               </div>
               
-              <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
+              <form className="mt-6 space-y-6" onSubmit={handleEmailSignup}>
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" name="name" type="text" required />
+                  <Input 
+                    id="name" 
+                    name="name" 
+                    type="text" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required 
+                  />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email address</Label>
-                  <Input id="email" name="email" type="email" autoComplete="email" required />
+                  <Input 
+                    id="email" 
+                    name="email" 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email" 
+                    required 
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Password</Label>
                   </div>
-                  <Input id="password" name="password" type="password" autoComplete="new-password" required />
+                  <Input 
+                    id="password" 
+                    name="password" 
+                    type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="new-password" 
+                    required 
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Password must be at least 6 characters
+                  </p>
                 </div>
 
                 <div>
-                  <Button type="submit" className="w-full bg-skillpurple-400 hover:bg-skillpurple-500">
-                    Sign up
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-skillpurple-400 hover:bg-skillpurple-500"
+                    disabled={loading}
+                  >
+                    {loading ? "Creating Account..." : "Sign up"}
                   </Button>
                 </div>
               </form>
