@@ -24,6 +24,7 @@ interface Sprint {
   description: string;
   category: string;
   difficulty: string;
+  duration: number; // Added this property to fix the TypeScript error
 }
 
 const ChallengeView: React.FC = () => {
