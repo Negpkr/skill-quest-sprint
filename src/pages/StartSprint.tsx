@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,13 +11,89 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import AIPromptFlow from "../components/AIPromptFlow";
 
+interface SprintOption {
+  id: string;
+  title: string;
+  description: string;
+}
+
 const StartSprint: React.FC = () => {
   const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
   const [customSkill, setCustomSkill] = useState("");
   const [showAIPrompt, setShowAIPrompt] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [sprints, setSprints] = useState<SprintOption[]>([]);
   const navigate = useNavigate();
   const { user } = useAuth();
+  
+  // Fetch sprints from database on component mount
+  useEffect(() => {
+    const fetchSprints = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('sprints')
+          .select('id, title, description')
+          .order('title');
+        
+        if (error) {
+          throw error;
+        }
+        
+        if (data && data.length > 0) {
+          setSprints(data);
+        } else {
+          // Fallback to default sprints if no data in database
+          setSprints([
+            {
+              id: "00000000-0000-0000-0000-000000000001", // Using placeholder UUIDs
+              title: "Design Starter Sprint",
+              description: "Learn graphic design fundamentals and create your first portfolio pieces"
+            },
+            {
+              id: "00000000-0000-0000-0000-000000000002",
+              title: "Web Dev Sprint",
+              description: "Build your first website with HTML, CSS and JavaScript"
+            },
+            {
+              id: "00000000-0000-0000-0000-000000000003",
+              title: "Freelance Starter Pack",
+              description: "Set up your freelance business and land your first client"
+            }
+          ]);
+        }
+      } catch (error: any) {
+        console.error("Error fetching sprints:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load sprints. Using default options.",
+          variant: "destructive",
+        });
+        
+        // Use hardcoded sprints as fallback
+        setSprints([
+          {
+            id: "00000000-0000-0000-0000-000000000001", // Using placeholder UUIDs
+            title: "Design Starter Sprint",
+            description: "Learn graphic design fundamentals and create your first portfolio pieces"
+          },
+          {
+            id: "00000000-0000-0000-0000-000000000002",
+            title: "Web Dev Sprint",
+            description: "Build your first website with HTML, CSS and JavaScript"
+          },
+          {
+            id: "00000000-0000-0000-0000-000000000003",
+            title: "Freelance Starter Pack",
+            description: "Set up your freelance business and land your first client"
+          }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchSprints();
+  }, []);
   
   const handleStartSprint = async () => {
     if (!selectedSprint || !user) return;
@@ -35,7 +111,7 @@ const StartSprint: React.FC = () => {
           .insert([
             { 
               user_id: user.id,
-              sprint_id: selectedSprint,
+              sprint_id: selectedSprint, // Now using valid UUID from database
               start_date: new Date().toISOString(),
               completed: false
             }
@@ -61,24 +137,6 @@ const StartSprint: React.FC = () => {
       setIsLoading(false);
     }
   };
-  
-  const sprints = [
-    {
-      id: "design-starter",
-      title: "Design Starter Sprint",
-      description: "Learn graphic design fundamentals and create your first portfolio pieces"
-    },
-    {
-      id: "web-dev",
-      title: "Web Dev Sprint",
-      description: "Build your first website with HTML, CSS and JavaScript"
-    },
-    {
-      id: "freelance",
-      title: "Freelance Starter Pack",
-      description: "Set up your freelance business and land your first client"
-    }
-  ];
 
   if (showAIPrompt) {
     return <AIPromptFlow skill={customSkill} onComplete={() => navigate("/dashboard")} />;
@@ -97,54 +155,60 @@ const StartSprint: React.FC = () => {
       
       <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <h2 className="text-xl font-bold mb-6">Choose a Sprint</h2>
-        <div className="space-y-6">
-          {sprints.map((sprint) => (
+        {isLoading ? (
+          <div className="flex justify-center">
+            <div className="animate-spin h-10 w-10 border-4 border-skillpurple-400 rounded-full border-t-transparent"></div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {sprints.map((sprint) => (
+              <Card 
+                key={sprint.id} 
+                className={`cursor-pointer transition-all ${selectedSprint === sprint.id ? 'ring-2 ring-skillpurple-400' : 'hover:border-skillpurple-300'}`}
+                onClick={() => setSelectedSprint(sprint.id)}
+              >
+                <CardHeader>
+                  <CardTitle>{sprint.title}</CardTitle>
+                  <CardDescription>{sprint.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+            
             <Card 
-              key={sprint.id} 
-              className={`cursor-pointer transition-all ${selectedSprint === sprint.id ? 'ring-2 ring-skillpurple-400' : 'hover:border-skillpurple-300'}`}
-              onClick={() => setSelectedSprint(sprint.id)}
+              className={`cursor-pointer transition-all ${selectedSprint === 'custom' ? 'ring-2 ring-skillpurple-400' : 'hover:border-skillpurple-300'}`}
+              onClick={() => setSelectedSprint('custom')}
             >
               <CardHeader>
-                <CardTitle>{sprint.title}</CardTitle>
-                <CardDescription>{sprint.description}</CardDescription>
+                <CardTitle>Create Custom Sprint</CardTitle>
+                <CardDescription>Define your own 30-day sprint with a custom skill you want to learn</CardDescription>
               </CardHeader>
+              {selectedSprint === 'custom' && (
+                <CardContent>
+                  <div>
+                    <Label htmlFor="customSkill">What skill do you want to learn?</Label>
+                    <Input 
+                      id="customSkill" 
+                      placeholder="E.g., Photography, Podcast Creation, Python Programming, etc."
+                      className="mt-1"
+                      value={customSkill}
+                      onChange={(e) => setCustomSkill(e.target.value)}
+                    />
+                  </div>
+                </CardContent>
+              )}
             </Card>
-          ))}
-          
-          <Card 
-            className={`cursor-pointer transition-all ${selectedSprint === 'custom' ? 'ring-2 ring-skillpurple-400' : 'hover:border-skillpurple-300'}`}
-            onClick={() => setSelectedSprint('custom')}
-          >
-            <CardHeader>
-              <CardTitle>Create Custom Sprint</CardTitle>
-              <CardDescription>Define your own 30-day sprint with a custom skill you want to learn</CardDescription>
-            </CardHeader>
-            {selectedSprint === 'custom' && (
-              <CardContent>
-                <div>
-                  <Label htmlFor="customSkill">What skill do you want to learn?</Label>
-                  <Input 
-                    id="customSkill" 
-                    placeholder="E.g., Photography, Podcast Creation, Python Programming, etc."
-                    className="mt-1"
-                    value={customSkill}
-                    onChange={(e) => setCustomSkill(e.target.value)}
-                  />
-                </div>
-              </CardContent>
-            )}
-          </Card>
-          
-          <div className="flex justify-end mt-8">
-            <Button 
-              onClick={handleStartSprint}
-              disabled={!selectedSprint || isLoading}
-              className="bg-skillpurple-400 hover:bg-skillpurple-500"
-            >
-              {isLoading ? "Starting..." : "Start My 30-Day Sprint"}
-            </Button>
+            
+            <div className="flex justify-end mt-8">
+              <Button 
+                onClick={handleStartSprint}
+                disabled={!selectedSprint || isLoading}
+                className="bg-skillpurple-400 hover:bg-skillpurple-500"
+              >
+                {isLoading ? "Starting..." : "Start My 30-Day Sprint"}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </Layout>
   );
