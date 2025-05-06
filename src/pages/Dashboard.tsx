@@ -1,15 +1,17 @@
 
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
-import { Flame } from "lucide-react";
-import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
+
+// Import refactored components
+import TaskList from "@/components/dashboard/TaskList";
+import SprintCalendar from "@/components/dashboard/SprintCalendar";
+import ActiveChallenge from "@/components/dashboard/ActiveChallenge";
+import ProgressStreak from "@/components/dashboard/ProgressStreak";
+import NoActiveSprint from "@/components/dashboard/NoActiveSprint";
+import DashboardLoading from "@/components/dashboard/DashboardLoading";
 
 interface Task {
   id: string;
@@ -23,6 +25,11 @@ interface Sprint {
   current_day: number;
   total_days: number;
   progress_percent: number;
+}
+
+interface CalendarDay {
+  day: number;
+  status: 'completed' | 'today' | 'upcoming';
 }
 
 const Dashboard: React.FC = () => {
@@ -130,12 +137,12 @@ const Dashboard: React.FC = () => {
   };
   
   // Generate calendar days
-  const generateCalendarDays = () => {
+  const generateCalendarDays = (): CalendarDay[] => {
     if (!activeSprint) return Array.from({ length: 30 }).map((_, i) => ({ day: i + 1, status: 'upcoming' }));
     
     return Array.from({ length: activeSprint.total_days }).map((_, i) => {
       const day = i + 1;
-      let status = 'upcoming';
+      let status = 'upcoming' as 'upcoming' | 'completed' | 'today';
       
       if (day < activeSprint.current_day) {
         status = 'completed';
@@ -160,150 +167,37 @@ const Dashboard: React.FC = () => {
       
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin h-10 w-10 border-4 border-skillpurple-400 rounded-full border-t-transparent"></div>
-          </div>
+          <DashboardLoading />
         ) : !activeSprint ? (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">No Active Sprint</h2>
-            <p className="text-muted-foreground mb-8">Start a new sprint to begin your learning journey.</p>
-            <Button asChild className="bg-skillpurple-400 hover:bg-skillpurple-500">
-              <Link to="/start-sprint">Start a Sprint</Link>
-            </Button>
-          </div>
+          <NoActiveSprint />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left column */}
             <div className="lg:col-span-2 space-y-8">
               {/* Today's Tasks */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Today's Tasks</CardTitle>
-                  <CardDescription>
-                    Complete these tasks to continue your progress on {activeSprint.title}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {todaysTasks.length > 0 ? (
-                    <div className="space-y-4">
-                      {todaysTasks.map((task) => (
-                        <div key={task.id} className="flex items-start space-x-3">
-                          <Checkbox 
-                            id={task.id} 
-                            checked={task.completed}
-                            onCheckedChange={() => handleTaskComplete(task.id)}
-                          />
-                          <div>
-                            <label
-                              htmlFor={task.id}
-                              className={`text-sm font-medium leading-none cursor-pointer ${task.completed ? "line-through text-muted-foreground" : ""}`}
-                            >
-                              {task.title}
-                            </label>
-                          </div>
-                        </div>
-                      ))}
-                      
-                      <Button 
-                        className="mt-4 w-full bg-skillpurple-400 hover:bg-skillpurple-500"
-                        onClick={handleMarkAllComplete}
-                      >
-                        Mark All Complete
-                      </Button>
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground">
-                      No tasks found for today. Try refreshing or contact support if this issue persists.
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
+              <TaskList 
+                tasks={todaysTasks}
+                onTaskComplete={handleTaskComplete}
+                onMarkAllComplete={handleMarkAllComplete}
+              />
               
               {/* Calendar View */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Sprint Calendar</CardTitle>
-                  <CardDescription>
-                    Your 30-day challenge roadmap
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-7 gap-1">
-                    {generateCalendarDays().map(({ day, status }) => (
-                      <div
-                        key={day}
-                        className={`
-                          aspect-square flex items-center justify-center rounded-md text-sm relative
-                          ${status === 'completed' ? "bg-softgreen text-green-800" : 
-                            status === 'today' ? "bg-skillpurple-400 text-white" : "bg-muted"}
-                        `}
-                      >
-                        <span>{day}</span>
-                        {(status === 'completed') && (
-                          <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-green-500" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
-                    <div className="flex items-center space-x-2">
-                      <div className="h-3 w-3 bg-skillpurple-400 rounded-full"></div>
-                      <span>Today</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="h-3 w-3 bg-softgreen rounded-full"></div>
-                      <span>Completed</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="h-3 w-3 bg-muted rounded-full"></div>
-                      <span>Upcoming</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <SprintCalendar days={generateCalendarDays()} />
             </div>
             
             {/* Right column - stats and links */}
             <div className="space-y-8">
               {/* Current Challenge */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Active Challenge</CardTitle>
-                  <CardDescription>{activeSprint.title}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Progress</span>
-                      <span>Day {activeSprint.current_day} of {activeSprint.total_days}</span>
-                    </div>
-                    <Progress value={activeSprint.progress_percent} className="h-2" />
-                  </div>
-                  
-                  <Button asChild variant="outline" className="w-full">
-                    <Link to={`/challenge/${activeSprint.id}`}>View Full Challenge</Link>
-                  </Button>
-                </CardContent>
-              </Card>
+              <ActiveChallenge 
+                id={activeSprint.id}
+                title={activeSprint.title}
+                currentDay={activeSprint.current_day}
+                totalDays={activeSprint.total_days}
+                progressPercent={activeSprint.progress_percent}
+              />
               
               {/* Progress Streak */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Progress Streak</CardTitle>
-                  <CardDescription>Keep the momentum going!</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center p-4 bg-softpurple rounded-lg">
-                    <span className="text-2xl font-bold">{streakDays} Days</span>
-                    <div className="flex space-x-1">
-                      {Array.from({ length: Math.min(streakDays, 5) }).map((_, i) => (
-                        <Flame key={i} className="h-6 w-6 text-red-500" />
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <ProgressStreak streakDays={streakDays} />
             </div>
           </div>
         )}
