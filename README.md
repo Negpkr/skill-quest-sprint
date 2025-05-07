@@ -73,6 +73,7 @@ skillsprint-mvp/
 
 This project is licensed under the MIT License.
 
+# Team Documentation
 
 <img width="570" alt="image" src="https://github.com/user-attachments/assets/8b32d367-0c34-494f-b47d-49f0706c24a4" />
 <img width="599" alt="image" src="https://github.com/user-attachments/assets/d66e58e5-0be6-4eb8-900b-a2215d5253b3" />
