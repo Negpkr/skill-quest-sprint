@@ -118,15 +118,22 @@ const Hero: React.FC = () => {
           </span>.
         </motion.p>
         
-        {/* Call-to-Action button */}
+        {/* Call-to-Action buttons */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-4"
         >
           <Button asChild size="lg" className="text-lg h-14 px-10 rounded-full bg-white text-neo-purple hover:bg-white/90 shadow-lg">
             <Link to="/challenges" className="flex items-center">
               Start Sprint <Rocket className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+          
+          <Button asChild size="lg" className="text-lg h-14 px-10 rounded-full bg-transparent border-2 border-white text-white hover:bg-white/10 shadow-lg">
+            <Link to="/generate-sprint" className="flex items-center">
+              Generate Sprint <Sparkles className="ml-2 h-5 w-5" />
             </Link>
           </Button>
         </motion.div>

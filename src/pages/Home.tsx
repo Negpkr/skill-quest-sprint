@@ -178,12 +178,6 @@ const Home: React.FC = () => {
             <Button asChild size="lg" className="bg-white text-skillpurple-500 hover:bg-gray-100 hover:text-skillpurple-600">
               <Link to="/signup">Get Started For Free</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-              <Link to="/generate-sprint" className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5" />
-                Generate Sprint
-              </Link>
-            </Button>
           </div>
         </div>
       </section>
