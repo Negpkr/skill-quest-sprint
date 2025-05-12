@@ -27,6 +27,7 @@ import DesignBasics from "./pages/learn/DesignBasics";
 import Freelancing101 from "./pages/learn/Freelancing101";
 import TechStarter from "./pages/learn/TechStarter";
 import StartSprint from "./pages/StartSprint";
+import GenerateCustomSprint from "./pages/GenerateCustomSprint";
 import LearnCategoryPage from "./pages/learn/LearnCategoryPage";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
@@ -98,6 +99,11 @@ const App = () => {
                 <Route path="/start-sprint" element={
                   <ProtectedRoute>
                     <StartSprint />
+                  </ProtectedRoute>
+                } />
+                <Route path="/generate-sprint" element={
+                  <ProtectedRoute>
+                    <GenerateCustomSprint />
                   </ProtectedRoute>
                 } />
                 <Route path="/profile" element={
