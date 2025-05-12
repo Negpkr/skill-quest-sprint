@@ -47,13 +47,13 @@ const NavbarDesktop: React.FC = () => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           
-          {/* Challenges Link */}
+          {/* Sprints Link */}
           <NavigationMenuItem>
             <Link 
-              to="/challenges" 
+              to="/sprints" 
               className="px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary transition-colors"
             >
-              Challenges
+              Sprints
             </Link>
           </NavigationMenuItem>
 

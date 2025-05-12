@@ -66,11 +66,11 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({
         </div>
         
         <Link
-          to="/challenges"
+          to="/sprints"
           className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
           onClick={() => setIsOpen(false)}
         >
-          Challenges
+          Sprints
         </Link>
         
         {/* Generate Sprint Link for mobile menu */}

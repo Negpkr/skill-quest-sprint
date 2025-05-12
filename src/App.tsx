@@ -33,7 +33,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Challenges from "./pages/Challenges";
+import Sprints from "./pages/Challenges";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -76,9 +76,9 @@ const App = () => {
                     <Practice />
                   </ProtectedRoute>
                 } />
-                <Route path="/challenges" element={
+                <Route path="/sprints" element={
                   <ProtectedRoute>
-                    <Challenges />
+                    <Sprints />
                   </ProtectedRoute>
                 } />
                 <Route path="/challenge/:id" element={

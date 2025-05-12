@@ -6,7 +6,7 @@ import ChallengeHeader from "@/components/challenges/ChallengeHeader";
 import ChallengeFilters from "@/components/challenges/ChallengeFilters";
 import ChallengeGrid from "@/components/challenges/ChallengeGrid";
 
-const Challenges: React.FC = () => {
+const Sprints: React.FC = () => {
   const {
     searchTerm,
     setSearchTerm,
@@ -51,4 +51,4 @@ const Challenges: React.FC = () => {
   );
 };
 
-export default Challenges;
+export default Sprints;
