@@ -1,9 +1,8 @@
-
 import React from "react";
 import Layout from "../components/Layout";
 import Hero from "../components/Hero";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
@@ -15,7 +14,7 @@ const Home: React.FC = () => {
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold">Featured Challenges</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold">Featured Sprints</h2>
             <Button asChild variant="ghost" className="text-skillpurple-500 hover:text-skillpurple-600">
               <Link to="/sprints" className="flex items-center">
                 View all <ArrowRight className="ml-1 h-4 w-4" />
@@ -39,15 +38,9 @@ const Home: React.FC = () => {
                   <span className="badge-beginner">Beginner</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">Learn Canva basics and create your first sellable design in 30 days.</p>
-                <div className="flex gap-2">
+                <div className="flex">
                   <Button asChild className="flex-1 bg-skillpurple-400 hover:bg-skillpurple-500">
-                    <Link to="/sprints">Start Sprint</Link>
-                  </Button>
-                  <Button asChild variant="outline" className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500">
-                    <Link to="/generate-sprint">
-                      <Sparkles className="h-4 w-4" />
-                      Generate
-                    </Link>
+                    <Link to="/sprint-detail/design-starter">View Sprint</Link>
                   </Button>
                 </div>
               </div>
@@ -66,15 +59,9 @@ const Home: React.FC = () => {
                   <span className="badge-intermediate">Intermediate</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">Build and launch your first website with HTML, CSS, and basic JavaScript.</p>
-                <div className="flex gap-2">
+                <div className="flex">
                   <Button asChild className="flex-1 bg-skillpurple-400 hover:bg-skillpurple-500">
-                    <Link to="/sprints">Start Sprint</Link>
-                  </Button>
-                  <Button asChild variant="outline" className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500">
-                    <Link to="/generate-sprint">
-                      <Sparkles className="h-4 w-4" />
-                      Generate
-                    </Link>
+                    <Link to="/sprint-detail/web-dev">View Sprint</Link>
                   </Button>
                 </div>
               </div>
@@ -96,15 +83,9 @@ const Home: React.FC = () => {
                   <span className="badge-beginner">Beginner</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">Start and earn from your first freelancing gig in just 30 days.</p>
-                <div className="flex gap-2">
+                <div className="flex">
                   <Button asChild className="flex-1 bg-skillpurple-400 hover:bg-skillpurple-500">
-                    <Link to="/sprints">Start Sprint</Link>
-                  </Button>
-                  <Button asChild variant="outline" className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500">
-                    <Link to="/generate-sprint">
-                      <Sparkles className="h-4 w-4" />
-                      Generate
-                    </Link>
+                    <Link to="/sprint-detail/freelance-launchpad">View Sprint</Link>
                   </Button>
                 </div>
               </div>
