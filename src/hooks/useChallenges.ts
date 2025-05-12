@@ -118,9 +118,9 @@ export const useChallenges = () => {
           setSprints(formattedSprints);
           console.log("Fetched sprints:", formattedSprints);
         } else {
-          // Fallback to sample data
+          // Only use fallback data if no data was returned from Supabase
           setSprints(challengesData);
-          console.log("Using fallback challenge data");
+          console.log("Using fallback challenge data - no data found in database");
         }
       } catch (error) {
         console.error("Error fetching sprints:", error);
@@ -129,7 +129,7 @@ export const useChallenges = () => {
           description: "Failed to load sprint data. Using sample data instead.",
           variant: "destructive"
         });
-        // Use hardcoded data as fallback
+        // Use hardcoded data as fallback only if there was an error
         setSprints(challengesData);
       } finally {
         setIsLoading(false);
