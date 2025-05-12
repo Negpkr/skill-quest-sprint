@@ -14,6 +14,43 @@ const idToUuidMap: Record<string, string> = {
   'freelance-pro': 'd43fed60-f098-42f9-8afc-ba2c19d61b70'
 };
 
+// Fallback mock data for challenges when database data is unavailable
+const mockChallengeData: Record<string, any> = {
+  'design-starter': {
+    title: 'Design Sprint Starter',
+    description: 'Learn design fundamentals and create your first professional designs.',
+    category: 'Design',
+    difficulty: 'Beginner',
+    tasks: Array.from({ length: 30 }, (_, i) => ({
+      id: `design-task-${i+1}`,
+      title: `Day ${i+1}: Design Fundamentals`,
+      day: i+1
+    }))
+  },
+  'web-dev': {
+    title: 'Web Development Foundations',
+    description: 'Build your first website with HTML, CSS, and JavaScript.',
+    category: 'Tech',
+    difficulty: 'Beginner',
+    tasks: Array.from({ length: 30 }, (_, i) => ({
+      id: `webdev-task-${i+1}`,
+      title: `Day ${i+1}: Web Development Basics`,
+      day: i+1
+    }))
+  },
+  'freelance-launchpad': {
+    title: 'Freelance Launchpad',
+    description: 'Start your freelance career and land your first client.',
+    category: 'Freelance',
+    difficulty: 'Beginner',
+    tasks: Array.from({ length: 30 }, (_, i) => ({
+      id: `freelance-task-${i+1}`,
+      title: `Day ${i+1}: Freelance Fundamentals`,
+      day: i+1
+    }))
+  }
+};
+
 export interface Challenge {
   id: string;
   title: string;
@@ -180,43 +217,37 @@ export const useChallenge = (id: string | undefined): UseChallengeReturn => {
   // Function to use fallback static data when Supabase calls fail
   const useFallbackData = () => {
     console.log("Using fallback data for:", id);
-    // Attempt to import challengeData dynamically 
-    import("../pages/ChallengeDetail").then(module => {
-      if (module.challengeData && id && module.challengeData[id]) {
-        const mockData = module.challengeData[id];
-        
-        setSprint({
-          id: id,
-          title: mockData.title,
-          description: mockData.description,
-          category: mockData.category,
-          difficulty: mockData.difficulty,
-          duration: 30 // Default
-        });
-        
-        // Create mock challenges from the tasks in the mock data
-        const mockChallenges = mockData.tasks.map((task: any) => ({
-          id: task.id,
-          title: task.title,
-          description: "Complete this task to continue your progress in this challenge.",
-          day: task.day,
-          resources: JSON.stringify([
-            { title: "Getting Started", url: "https://example.com/resources" }
-          ])
-        }));
-        
-        setChallenges(mockChallenges);
-        return true;
-      }
+    
+    if (id && mockChallengeData[id]) {
+      const mockData = mockChallengeData[id];
       
-      // If no relevant mock data is found
-      setNotFound(true);
-      return false;
-    }).catch(err => {
-      console.error("Error loading fallback data:", err);
-      setNotFound(true);
-      return false;
-    });
+      setSprint({
+        id: id,
+        title: mockData.title,
+        description: mockData.description,
+        category: mockData.category,
+        difficulty: mockData.difficulty,
+        duration: 30 // Default
+      });
+      
+      // Create mock challenges from the tasks in the mock data
+      const mockChallenges = mockData.tasks.map((task: any) => ({
+        id: task.id,
+        title: task.title,
+        description: "Complete this task to continue your progress in this challenge.",
+        day: task.day,
+        resources: JSON.stringify([
+          { title: "Getting Started", url: "https://example.com/resources" }
+        ])
+      }));
+      
+      setChallenges(mockChallenges);
+      return true;
+    }
+    
+    // If no relevant mock data is found
+    setNotFound(true);
+    return false;
   };
 
   const handleMarkComplete = async () => {
