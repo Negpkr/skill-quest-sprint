@@ -155,14 +155,25 @@ export const useChallenges = () => {
     return categoryImages[category] || "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=2000";
   };
 
+  // Improved filter function with more robust string comparison
   const filteredChallenges = sprints.filter((challenge) => {
-    const matchesSearch = challenge.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         challenge.description.toLowerCase().includes(searchTerm.toLowerCase());
+    // Case insensitive search in title and description
+    const matchesSearch = 
+      searchTerm === "" || 
+      challenge.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (challenge.description && challenge.description.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    const matchesCategory = selectedCategory === "All" || challenge.category === selectedCategory;
+    // Category filtering
+    const matchesCategory = 
+      selectedCategory === "All" || 
+      challenge.category === selectedCategory;
     
-    const matchesDifficulty = selectedDifficulty === "All" || challenge.difficulty === selectedDifficulty;
+    // Difficulty filtering
+    const matchesDifficulty = 
+      selectedDifficulty === "All" || 
+      challenge.difficulty === selectedDifficulty;
     
+    // All conditions must be true for the item to be included
     return matchesSearch && matchesCategory && matchesDifficulty;
   });
 

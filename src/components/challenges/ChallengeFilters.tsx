@@ -2,10 +2,17 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { filterAnimations } from "./animations";
 import { categories, difficulties } from "@/hooks/useChallenges";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ChallengeFiltersProps {
   searchTerm: string;
@@ -41,45 +48,49 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        {searchTerm && (
+          <button 
+            className="absolute right-2.5 top-2.5 h-5 w-5 text-muted-foreground hover:text-foreground"
+            onClick={() => setSearchTerm("")}
+            aria-label="Clear search"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
       
       {/* Filters */}
       <div className="flex flex-wrap gap-2 justify-center sm:justify-end w-full sm:w-auto">
-        <div>
-          <label htmlFor="category-filter" className="sr-only">Category Filter</label>
-          <select
-            id="category-filter"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="py-2 px-3 bg-dark-card border border-dark-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-skillpurple-400"
-          >
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="Category" />
+          </SelectTrigger>
+          <SelectContent>
             {categories.map((category) => (
-              <option key={category} value={category}>
+              <SelectItem key={category} value={category}>
                 {category === "All" ? "All Categories" : category}
-              </option>
+              </SelectItem>
             ))}
-          </select>
-        </div>
+          </SelectContent>
+        </Select>
         
-        <div>
-          <label htmlFor="difficulty-filter" className="sr-only">Difficulty Filter</label>
-          <select
-            id="difficulty-filter"
-            value={selectedDifficulty}
-            onChange={(e) => setSelectedDifficulty(e.target.value)}
-            className="py-2 px-3 bg-dark-card border border-dark-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-skillpurple-400"
-          >
+        <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="Difficulty" />
+          </SelectTrigger>
+          <SelectContent>
             {difficulties.map((difficulty) => (
-              <option key={difficulty} value={difficulty}>
+              <SelectItem key={difficulty} value={difficulty}>
                 {difficulty === "All" ? "All Difficulties" : difficulty}
-              </option>
+              </SelectItem>
             ))}
-          </select>
-        </div>
+          </SelectContent>
+        </Select>
         
         <Button
           variant="outline"
           onClick={resetFilters}
+          disabled={searchTerm === "" && selectedCategory === "All" && selectedDifficulty === "All"}
         >
           Reset
         </Button>
