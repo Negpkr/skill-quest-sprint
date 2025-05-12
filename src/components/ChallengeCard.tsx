@@ -87,7 +87,7 @@ const ChallengeCard: React.FC<{ challenge: ChallengeProps }> = ({ challenge }) =
       </CardContent>
       <CardFooter className="pt-4 mt-4">
         <Button asChild className="w-full bg-skillpurple-400 hover:bg-skillpurple-500">
-          <Link to={`/challenge-detail/${challenge.id}`}>View Sprint</Link>
+          <Link to={`/sprint-detail/${challenge.id}`}>View Sprint</Link>
         </Button>
       </CardFooter>
     </Card>
