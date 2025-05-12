@@ -36,7 +36,7 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
         <Search className="absolute left-2.5 top-2.5 h-5 w-5 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search challenges..."
+          placeholder="Search sprints..."
           className="pl-9 bg-dark-card border-dark-border"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

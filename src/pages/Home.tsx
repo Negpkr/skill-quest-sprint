@@ -17,7 +17,7 @@ const Home: React.FC = () => {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold">Featured Challenges</h2>
             <Button asChild variant="ghost" className="text-skillpurple-500 hover:text-skillpurple-600">
-              <Link to="/challenges" className="flex items-center">
+              <Link to="/sprints" className="flex items-center">
                 View all <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
@@ -41,7 +41,7 @@ const Home: React.FC = () => {
                 <p className="text-sm text-muted-foreground mb-4">Learn Canva basics and create your first sellable design in 30 days.</p>
                 <div className="flex gap-2">
                   <Button asChild className="flex-1 bg-skillpurple-400 hover:bg-skillpurple-500">
-                    <Link to="/challenges">Start Sprint</Link>
+                    <Link to="/sprints">Start Sprint</Link>
                   </Button>
                   <Button asChild variant="outline" className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500">
                     <Link to="/generate-sprint">
@@ -68,7 +68,7 @@ const Home: React.FC = () => {
                 <p className="text-sm text-muted-foreground mb-4">Build and launch your first website with HTML, CSS, and basic JavaScript.</p>
                 <div className="flex gap-2">
                   <Button asChild className="flex-1 bg-skillpurple-400 hover:bg-skillpurple-500">
-                    <Link to="/challenges">Start Sprint</Link>
+                    <Link to="/sprints">Start Sprint</Link>
                   </Button>
                   <Button asChild variant="outline" className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500">
                     <Link to="/generate-sprint">
@@ -98,7 +98,7 @@ const Home: React.FC = () => {
                 <p className="text-sm text-muted-foreground mb-4">Start and earn from your first freelancing gig in just 30 days.</p>
                 <div className="flex gap-2">
                   <Button asChild className="flex-1 bg-skillpurple-400 hover:bg-skillpurple-500">
-                    <Link to="/challenges">Start Sprint</Link>
+                    <Link to="/sprints">Start Sprint</Link>
                   </Button>
                   <Button asChild variant="outline" className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500">
                     <Link to="/generate-sprint">

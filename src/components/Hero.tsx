@@ -126,7 +126,7 @@ const Hero: React.FC = () => {
           className="flex flex-col sm:flex-row gap-4"
         >
           <Button asChild size="lg" className="text-lg h-14 px-10 rounded-full bg-white text-neo-purple hover:bg-white/90 shadow-lg">
-            <Link to="/challenges" className="flex items-center">
+            <Link to="/sprints" className="flex items-center">
               Start Sprint <Rocket className="ml-2 h-5 w-5" />
             </Link>
           </Button>
