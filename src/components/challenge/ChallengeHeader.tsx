@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Progress } from "@/components/ui/progress";
-import { type Sprint } from "@/hooks/useChallenge";
+import { type Sprint } from "@/types/sprint";
 import { Trophy } from "lucide-react";
 
 interface ChallengeHeaderProps {

@@ -3,7 +3,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { type Challenge } from "@/hooks/useChallenge";
+import { type Challenge } from "@/types/sprint";
 
 interface ChallengeBodyProps {
   currentChallenge: Challenge | undefined;

@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { type Sprint, type Challenge } from "@/hooks/useChallenge";
+import { type Sprint, type Challenge } from "@/types/sprint";
 
 interface ChallengeResourcesProps {
   currentChallenge: Challenge | undefined;
