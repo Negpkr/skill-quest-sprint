@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
@@ -34,10 +34,14 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
   resetFilters
 }) => {
   // Local handler to ensure resetFilters is properly called
-  const handleResetFilters = () => {
-    console.log("Resetting filters");
+  const handleResetFilters = useCallback(() => {
+    console.log("Reset button clicked");
     resetFilters();
-  };
+    // Explicitly set values locally as well to ensure UI updates
+    setSearchTerm("");
+    setSelectedCategory("All");
+    setSelectedDifficulty("All");
+  }, [resetFilters, setSearchTerm, setSelectedCategory, setSelectedDifficulty]);
 
   // Check if any filters are active
   const hasActiveFilters = 
@@ -103,6 +107,7 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
           variant="outline"
           onClick={handleResetFilters}
           disabled={!hasActiveFilters}
+          className="min-w-[80px]"
         >
           Reset
         </Button>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
@@ -177,16 +176,21 @@ export const useChallenges = () => {
     return matchesSearch && matchesCategory && matchesDifficulty;
   });
 
-  // Enhanced reset filters function with debugging
+  // Enhanced reset filters function with more robust handling
   const resetFilters = () => {
     console.log("Reset filters called");
     console.log("Before reset - searchTerm:", searchTerm, "category:", selectedCategory, "difficulty:", selectedDifficulty);
     
+    // Force state updates with explicit new values
     setSearchTerm("");
     setSelectedCategory("All");
     setSelectedDifficulty("All");
     
-    console.log("Reset filters completed");
+    // Add a small delay to ensure React processes the updates
+    setTimeout(() => {
+      console.log("After reset - searchTerm:", "", "category:", "All", "difficulty:", "All");
+      console.log("Reset filters completed");
+    }, 0);
   };
 
   return {

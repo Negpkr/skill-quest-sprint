@@ -19,6 +19,12 @@ const Sprints: React.FC = () => {
     resetFilters
   } = useChallenges();
   
+  // Handler to ensure resetFilters is called with proper context
+  const handleResetFilters = () => {
+    console.log("Page level reset called");
+    resetFilters();
+  };
+  
   return (
     <Layout>
       <div className="bg-gradient-to-b from-dark-background to-black py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -33,7 +39,7 @@ const Sprints: React.FC = () => {
             setSelectedCategory={setSelectedCategory}
             selectedDifficulty={selectedDifficulty}
             setSelectedDifficulty={setSelectedDifficulty}
-            resetFilters={resetFilters}
+            resetFilters={handleResetFilters}
           />
         </div>
       </div>
@@ -43,7 +49,7 @@ const Sprints: React.FC = () => {
           <ChallengeGrid 
             challenges={filteredChallenges}
             isLoading={isLoading}
-            resetFilters={resetFilters}
+            resetFilters={handleResetFilters}
           />
         </div>
       </div>
