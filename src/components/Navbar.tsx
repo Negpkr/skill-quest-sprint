@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, ChevronDown, User } from "lucide-react";
+import { Menu, ChevronDown, User, Sparkles } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -124,6 +124,20 @@ const Navbar: React.FC = () => {
                     Challenges
                   </Link>
                 </NavigationMenuItem>
+
+                {/* Generate Sprint Link - Added here */}
+                <NavigationMenuItem>
+                  <Button 
+                    asChild 
+                    variant="outline" 
+                    className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500"
+                  >
+                    <Link to="/generate-sprint">
+                      <Sparkles className="h-4 w-4" />
+                      Generate Sprint
+                    </Link>
+                  </Button>
+                </NavigationMenuItem>
                 
                 {/* About Link */}
                 <NavigationMenuItem>
@@ -236,6 +250,19 @@ const Navbar: React.FC = () => {
             >
               Challenges
             </Link>
+            
+            {/* Generate Sprint Link for mobile menu */}
+            <Link
+              to="/generate-sprint"
+              className="block px-3 py-2 rounded-md text-base font-medium bg-skillpurple-50 text-skillpurple-500"
+              onClick={() => setIsOpen(false)}
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Generate Sprint
+              </div>
+            </Link>
+            
             <Link
               to="/about"
               className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
