@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Rocket } from "lucide-react";
+import { Rocket, Sparkles } from "lucide-react";
 
 const NoActiveSprint: React.FC = () => {
   return (
@@ -24,8 +24,11 @@ const NoActiveSprint: React.FC = () => {
           <Link to="/challenges">Browse Sprints</Link>
         </Button>
         
-        <Button asChild variant="outline" size="lg" className="border-2">
-          <Link to="/sprints/custom">Create Custom Sprint</Link>
+        <Button asChild variant="outline" size="lg" className="border-2 flex items-center gap-2">
+          <Link to="/generate-sprint">
+            <Sparkles className="h-4 w-4" />
+            Generate Sprint
+          </Link>
         </Button>
       </div>
       

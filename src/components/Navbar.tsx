@@ -91,6 +91,13 @@ const Navbar: React.FC = () => {
                   </Link>
                 </NavigationMenuItem>
                 
+                {/* Dashboard Link - Added here */}
+                <NavigationMenuItem>
+                  <Link to="/dashboard" className="px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary transition-colors">
+                    Dashboard
+                  </Link>
+                </NavigationMenuItem>
+                
                 {/* Learn Dropdown */}
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>Learn</NavigationMenuTrigger>
@@ -125,7 +132,7 @@ const Navbar: React.FC = () => {
                   </Link>
                 </NavigationMenuItem>
 
-                {/* Generate Sprint Link - Added here */}
+                {/* Generate Sprint Link */}
                 <NavigationMenuItem>
                   <Button 
                     asChild 
@@ -139,12 +146,7 @@ const Navbar: React.FC = () => {
                   </Button>
                 </NavigationMenuItem>
                 
-                {/* About Link */}
-                <NavigationMenuItem>
-                  <Link to="/about" className="px-3 py-2 rounded-md text-sm font-medium hover:bg-secondary transition-colors">
-                    About
-                  </Link>
-                </NavigationMenuItem>
+                {/* About Link removed */}
                 
                 {/* Login/User Button */}
                 <NavigationMenuItem>
@@ -218,6 +220,16 @@ const Navbar: React.FC = () => {
             >
               Home
             </Link>
+            
+            {/* Dashboard Link for mobile */}
+            <Link
+              to="/dashboard"
+              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
+              onClick={() => setIsOpen(false)}
+            >
+              Dashboard
+            </Link>
+            
             <div className="relative">
               <div className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary">
                 Learn <ChevronDown className="inline ml-1 h-4 w-4" />
@@ -263,13 +275,7 @@ const Navbar: React.FC = () => {
               </div>
             </Link>
             
-            <Link
-              to="/about"
-              className="block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary"
-              onClick={() => setIsOpen(false)}
-            >
-              About
-            </Link>
+            {/* About Link removed from mobile menu */}
             
             {/* Login/Logout for mobile */}
             {!user ? (

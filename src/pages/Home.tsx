@@ -3,7 +3,7 @@ import React from "react";
 import Layout from "../components/Layout";
 import Hero from "../components/Hero";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Home: React.FC = () => {
@@ -39,9 +39,17 @@ const Home: React.FC = () => {
                   <span className="badge-beginner">Beginner</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">Learn Canva basics and create your first sellable design in 30 days.</p>
-                <Button asChild className="w-full bg-skillpurple-400 hover:bg-skillpurple-500">
-                  <Link to="/challenges">Start Sprint</Link>
-                </Button>
+                <div className="flex gap-2">
+                  <Button asChild className="flex-1 bg-skillpurple-400 hover:bg-skillpurple-500">
+                    <Link to="/challenges">Start Sprint</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500">
+                    <Link to="/generate-sprint">
+                      <Sparkles className="h-4 w-4" />
+                      Generate
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
             
@@ -58,9 +66,17 @@ const Home: React.FC = () => {
                   <span className="badge-intermediate">Intermediate</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">Build and launch your first website with HTML, CSS, and basic JavaScript.</p>
-                <Button asChild className="w-full bg-skillpurple-400 hover:bg-skillpurple-500">
-                  <Link to="/challenges">Start Sprint</Link>
-                </Button>
+                <div className="flex gap-2">
+                  <Button asChild className="flex-1 bg-skillpurple-400 hover:bg-skillpurple-500">
+                    <Link to="/challenges">Start Sprint</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500">
+                    <Link to="/generate-sprint">
+                      <Sparkles className="h-4 w-4" />
+                      Generate
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
             
@@ -80,9 +96,17 @@ const Home: React.FC = () => {
                   <span className="badge-beginner">Beginner</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">Start and earn from your first freelancing gig in just 30 days.</p>
-                <Button asChild className="w-full bg-skillpurple-400 hover:bg-skillpurple-500">
-                  <Link to="/challenges">Start Sprint</Link>
-                </Button>
+                <div className="flex gap-2">
+                  <Button asChild className="flex-1 bg-skillpurple-400 hover:bg-skillpurple-500">
+                    <Link to="/challenges">Start Sprint</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="gap-1 border-skillpurple-400 text-skillpurple-400 hover:bg-skillpurple-50 hover:text-skillpurple-500">
+                    <Link to="/generate-sprint">
+                      <Sparkles className="h-4 w-4" />
+                      Generate
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -150,9 +174,17 @@ const Home: React.FC = () => {
           <p className="mb-8 max-w-2xl mx-auto">
             Join thousands of others who are learning new skills and earning their first side income through our 30-day sprints.
           </p>
-          <Button asChild size="lg" className="bg-white text-skillpurple-500 hover:bg-gray-100 hover:text-skillpurple-600">
-            <Link to="/signup">Get Started For Free</Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button asChild size="lg" className="bg-white text-skillpurple-500 hover:bg-gray-100 hover:text-skillpurple-600">
+              <Link to="/signup">Get Started For Free</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+              <Link to="/generate-sprint" className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5" />
+                Generate Sprint
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
     </Layout>
