@@ -33,6 +33,18 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
   setSelectedDifficulty,
   resetFilters
 }) => {
+  // Local handler to ensure resetFilters is properly called
+  const handleResetFilters = () => {
+    console.log("Resetting filters");
+    resetFilters();
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = 
+    searchTerm !== "" || 
+    selectedCategory !== "All" || 
+    selectedDifficulty !== "All";
+
   return (
     <motion.div 
       className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 mb-8"
@@ -89,8 +101,8 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
         
         <Button
           variant="outline"
-          onClick={resetFilters}
-          disabled={searchTerm === "" && selectedCategory === "All" && selectedDifficulty === "All"}
+          onClick={handleResetFilters}
+          disabled={!hasActiveFilters}
         >
           Reset
         </Button>

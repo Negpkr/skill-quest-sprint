@@ -177,10 +177,16 @@ export const useChallenges = () => {
     return matchesSearch && matchesCategory && matchesDifficulty;
   });
 
+  // Enhanced reset filters function with debugging
   const resetFilters = () => {
+    console.log("Reset filters called");
+    console.log("Before reset - searchTerm:", searchTerm, "category:", selectedCategory, "difficulty:", selectedDifficulty);
+    
     setSearchTerm("");
     setSelectedCategory("All");
     setSelectedDifficulty("All");
+    
+    console.log("Reset filters completed");
   };
 
   return {
