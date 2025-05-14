@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #4338ca;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+            max-height: 300px;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .status.success {
+            background-color: #d1fae5;
+        }
+        .status.error {
+            background-color: #fee2e2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+
+    <div class="card">
+        <h2>Connection Settings</h2>
+        <div>
+            <label for="supabase-url">Supabase URL:</label>
+            <input type="text" id="supabase-url" style="width: 100%; margin-bottom: 10px;" value="https://qawwfkjsxcneenctndtm.supabase.co">
+        </div>
+        <div>
+            <label for="supabase-key">Supabase Anon Key:</label>
+            <input type="text" id="supabase-key" style="width: 100%; margin-bottom: 10px;" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhd3dma2pzeGNuZWVuY3RuZHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1MzAzMzIsImV4cCI6MjA2MjEwNjMzMn0.QOFfmkaZVtWBDlVbhPbYKb4Dio94XAyOd-D8JpS2KXg">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Test Connection</h2>
+        <button id="test-connection">Test Connection</button>
+        <div id="connection-status"></div>
+    </div>
+
+    <div class="card">
+        <h2>Test Queries</h2>
+        <button id="test-sprints">Test Sprints Table</button>
+        <button id="test-challenges">Test Challenges Table</button>
+        <button id="test-user-progress">Test User Progress Table</button>
+        <button id="test-contact-messages">Test Contact Messages Table</button>
+        <button id="test-problem-reports">Test Problem Reports Table</button>
+        <div id="query-result"></div>
+    </div>
+
+    <div class="card">
+        <h2>Create Tables</h2>
+        <button id="create-tables">Create Missing Tables</button>
+        <div id="create-status"></div>
+    </div>
+
+    <script>
+        // Initialize Supabase client
+        function initSupabase() {
+            const url = document.getElementById('supabase-url').value;
+            const key = document.getElementById('supabase-key').value;
+            return supabase.createClient(url, key);
+        }
+
+        // Test connection
+        document.getElementById('test-connection').addEventListener('click', async () => {
+            const statusEl = document.getElementById('connection-status');
+            statusEl.innerHTML = 'Testing connection...';
+            statusEl.className = 'status';
+
+            try {
+                const client = initSupabase();
+                // Use a simpler query that doesn't use count(*)
+                const { data, error } = await client.from('sprints').select('*').limit(1);
+
+                if (error) {
+                    console.error('Connection error:', error);
+                    statusEl.innerHTML = `<p class="error">Connection failed: ${error.message}</p>`;
+                    statusEl.className = 'status error';
+                    return;
+                }
+
+                console.log('Connection successful:', data);
+                statusEl.innerHTML = '<p class="success">Connection successful!</p>';
+                statusEl.className = 'status success';
+            } catch (err) {
+                console.error('Exception during connection test:', err);
+                statusEl.innerHTML = `<p class="error">Exception: ${err.message}</p>`;
+                statusEl.className = 'status error';
+            }
+        });
+
+        // Test sprints table
+        document.getElementById('test-sprints').addEventListener('click', async () => {
+            await testTable('sprints');
+        });
+
+        // Test challenges table
+        document.getElementById('test-challenges').addEventListener('click', async () => {
+            await testTable('challenges');
+        });
+
+        // Test user_progress table
+        document.getElementById('test-user-progress').addEventListener('click', async () => {
+            await testTable('user_progress');
+        });
+
+        // Test contact_messages table
+        document.getElementById('test-contact-messages').addEventListener('click', async () => {
+            await testTable('contact_messages');
+        });
+
+        // Test problem_reports table
+        document.getElementById('test-problem-reports').addEventListener('click', async () => {
+            await testTable('problem_reports');
+        });
+
+        // Test a table
+        async function testTable(tableName) {
+            const resultEl = document.getElementById('query-result');
+            resultEl.innerHTML = `Testing ${tableName} table...`;
+
+            try {
+                const client = initSupabase();
+                // Use a simpler query that doesn't use count(*)
+                const { data, error } = await client.from(tableName).select('*').limit(1);
+
+                if (error) {
+                    console.error(`Error querying ${tableName}:`, error);
+                    resultEl.innerHTML = `<p class="error">Error querying ${tableName}: ${error.message}</p>`;
+                    return;
+                }
+
+                console.log(`${tableName} query successful:`, data);
+                resultEl.innerHTML = `<p class="success">${tableName} table exists!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+                // Try to get some actual data
+                const { data: rowData, error: rowError } = await client.from(tableName).select('*').limit(5);
+
+                if (rowError) {
+                    console.error(`Error fetching rows from ${tableName}:`, rowError);
+                    return;
+                }
+
+                if (rowData && rowData.length > 0) {
+                    resultEl.innerHTML += `<p>Sample data:</p><pre>${JSON.stringify(rowData, null, 2)}</pre>`;
+                } else {
+                    resultEl.innerHTML += `<p>No data found in ${tableName} table.</p>`;
+                }
+            } catch (err) {
+                console.error(`Exception testing ${tableName}:`, err);
+                resultEl.innerHTML = `<p class="error">Exception: ${err.message}</p>`;
+            }
+        }
+
+        // Create tables
+        document.getElementById('create-tables').addEventListener('click', async () => {
+            const statusEl = document.getElementById('create-status');
+            statusEl.innerHTML = 'Creating tables...';
+            statusEl.className = 'status';
+
+            try {
+                const client = initSupabase();
+
+                // SQL for creating tables
+                const createSprintsTable = `
+                    CREATE TABLE IF NOT EXISTS public.sprints (
+                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                        title TEXT NOT NULL,
+                        slug TEXT NOT NULL UNIQUE,
+                        description TEXT,
+                        duration INTEGER DEFAULT 30,
+                        difficulty TEXT,
+                        category TEXT,
+                        cover_image TEXT,
+                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                    );
+                `;
+
+                const createChallengesTable = `
+                    CREATE TABLE IF NOT EXISTS public.challenges (
+                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                        sprint_id UUID NOT NULL,
+                        day INTEGER NOT NULL,
+                        title TEXT NOT NULL,
+                        description TEXT,
+                        content TEXT,
+                        resources TEXT,
+                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                        UNIQUE(sprint_id, day)
+                    );
+                `;
+
+                const createUserProgressTable = `
+                    CREATE TABLE IF NOT EXISTS public.user_progress (
+                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                        user_id UUID NOT NULL,
+                        sprint_id UUID NOT NULL,
+                        challenge_id UUID,
+                        start_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                        completed_date TIMESTAMP WITH TIME ZONE,
+                        current_day INTEGER DEFAULT 1,
+                        completed BOOLEAN DEFAULT false,
+                        notes TEXT,
+                        UNIQUE(user_id, sprint_id)
+                    );
+                `;
+
+                const createContactMessagesTable = `
+                    CREATE TABLE IF NOT EXISTS public.contact_messages (
+                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                        name TEXT NOT NULL,
+                        email TEXT NOT NULL,
+                        subject TEXT NOT NULL,
+                        message TEXT NOT NULL,
+                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                        status TEXT DEFAULT 'new'
+                    );
+                `;
+
+                const createProblemReportsTable = `
+                    CREATE TABLE IF NOT EXISTS public.problem_reports (
+                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                        issue_type TEXT NOT NULL,
+                        description TEXT NOT NULL,
+                        email TEXT,
+                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+                        status TEXT DEFAULT 'new'
+                    );
+                `;
+
+                // Execute SQL commands
+                const tables = [
+                    { name: 'sprints', sql: createSprintsTable },
+                    { name: 'challenges', sql: createChallengesTable },
+                    { name: 'user_progress', sql: createUserProgressTable },
+                    { name: 'contact_messages', sql: createContactMessagesTable },
+                    { name: 'problem_reports', sql: createProblemReportsTable }
+                ];
+
+                const results = {};
+
+                for (const table of tables) {
+                    try {
+                        console.log(`Creating table: ${table.name}`);
+                        const { error } = await client.rpc('exec_sql', { sql_query: table.sql });
+
+                        if (error) {
+                            console.error(`Error creating ${table.name} table:`, error);
+                            results[table.name] = { success: false, error: error.message };
+                        } else {
+                            console.log(`Successfully created ${table.name} table`);
+                            results[table.name] = { success: true };
+                        }
+                    } catch (err) {
+                        console.error(`Exception creating ${table.name} table:`, err);
+                        results[table.name] = { success: false, error: err.message };
+                    }
+                }
+
+                statusEl.innerHTML = `<p>Table creation results:</p><pre>${JSON.stringify(results, null, 2)}</pre>`;
+                statusEl.className = 'status';
+            } catch (err) {
+                console.error('Error creating tables:', err);
+                statusEl.innerHTML = `<p class="error">Exception: ${err.message}</p>`;
+                statusEl.className = 'status error';
+            }
+        });
+    </script>
+</body>
+</html>
