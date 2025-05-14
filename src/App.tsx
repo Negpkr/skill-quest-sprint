@@ -31,7 +31,7 @@ import GenerateCustomSprint from "./pages/GenerateCustomSprint";
 import LearnCategoryPage from "./pages/learn/LearnCategoryPage";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import SupabaseTestPage from "./pages/SupabaseTestPage";
+
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sprints from "./pages/Challenges";
@@ -40,6 +40,7 @@ import Sprints from "./pages/Challenges";
 const queryClient = new QueryClient();
 
 const App = () => {
+
   return (
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
@@ -65,7 +66,6 @@ const App = () => {
                 <Route path="/freelancing-101" element={<Freelancing101 />} />
                 <Route path="/tech-starter" element={<TechStarter />} />
                 <Route path="/sprint-detail/:id" element={<ChallengeDetail />} />
-                <Route path="/supabase-test" element={<SupabaseTestPage />} />
 
                 {/* Protected routes */}
                 <Route path="/dashboard" element={

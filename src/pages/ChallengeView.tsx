@@ -15,20 +15,21 @@ import { useAuth } from "@/contexts/AuthContext";
 const ChallengeView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const { 
-    sprint, 
-    challenges, 
-    currentDay, 
-    isLoading, 
-    taskCompleted, 
+  const {
+    sprint,
+    challenges,
+    currentDay,
+    isLoading,
+    taskCompleted,
     notFound,
-    handleMarkComplete, 
-    getCurrentChallenge, 
-    parseResources 
+    handleMarkComplete,
+    handleToggleComplete,
+    getCurrentChallenge,
+    parseResources
   } = useChallenge(id);
-  
-  const { streakDays, isLoading: isStreakLoading } = useStreakData(user?.id);
-  
+
+  const { streakDays, isLoading: isStreakLoading, refreshStreak } = useStreakData(user?.id);
+
   // Redirect if not found
   if (notFound && !isLoading) {
     toast({
@@ -38,40 +39,42 @@ const ChallengeView: React.FC = () => {
     });
     return <Navigate to="/challenges" replace />;
   }
-  
+
   const currentChallenge = getCurrentChallenge();
   const progressPercent = sprint?.duration ? (currentDay / sprint.duration) * 100 : 0;
-  
+
   return (
     <Layout>
-      <ChallengeHeader 
-        sprint={sprint} 
-        currentDay={currentDay} 
+      <ChallengeHeader
+        sprint={sprint}
+        currentDay={currentDay}
         progressPercent={progressPercent}
         isLoading={isLoading}
       />
-      
+
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         {isLoading ? (
           <ChallengeLoading />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <ChallengeBody 
+              <ChallengeBody
                 currentChallenge={currentChallenge}
                 currentDay={currentDay}
                 taskCompleted={taskCompleted}
                 handleMarkComplete={handleMarkComplete}
+                handleToggleComplete={handleToggleComplete}
               />
             </div>
-            
+
             <div className="space-y-6">
-              <StreakDisplay 
-                streakDays={streakDays} 
+              <StreakDisplay
+                streakDays={streakDays}
                 isLoading={isStreakLoading}
+                refreshStreak={refreshStreak}
               />
-              
-              <ChallengeResources 
+
+              <ChallengeResources
                 currentChallenge={currentChallenge}
                 sprint={sprint}
                 parseResources={parseResources}

@@ -2,7 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import ChallengeCard, { ChallengeProps } from "@/components/ChallengeCard";
+import ChallengeCard, { ChallengeProps } from "@/features/challenges/components/ChallengeCard";
 import { containerVariants, itemVariants, emptyStateAnimations } from "./animations";
 
 interface ChallengeGridProps {
@@ -26,7 +26,7 @@ const ChallengeGrid: React.FC<ChallengeGridProps> = ({
 
   if (challenges.length === 0) {
     return (
-      <motion.div 
+      <motion.div
         className="text-center py-12"
         {...emptyStateAnimations}
       >
@@ -42,7 +42,7 @@ const ChallengeGrid: React.FC<ChallengeGridProps> = ({
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
       variants={containerVariants}
       initial="hidden"

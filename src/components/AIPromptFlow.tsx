@@ -25,7 +25,7 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>([]);
   const { user } = useAuth();
-  
+
   // Simulated AI generated tasks - in a real app, this would call an OpenAI API endpoint
   const generateTasks = (skill: string) => {
     // This is a simulation of what an AI might return
@@ -49,13 +49,13 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
         // More tasks would be here
       ]
     };
-    
+
     // Detect which predefined skill set to use or generate generic tasks
     const lowerSkill = skill.toLowerCase();
-    let matchedCategory = Object.keys(baseTasksForSkill).find(key => 
+    let matchedCategory = Object.keys(baseTasksForSkill).find(key =>
       lowerSkill.includes(key)
     );
-    
+
     if (!matchedCategory) {
       // Generate generic tasks for unrecognized skills
       return Array.from({ length: 30 }, (_, i) => ({
@@ -65,11 +65,11 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
         description: `Complete your task for day ${i+1} of your ${skill} learning journey`
       }));
     }
-    
+
     // Return predefined tasks for recognized skills
     return baseTasksForSkill[matchedCategory];
   };
-  
+
   useEffect(() => {
     // In a real implementation, this would be an API call to OpenAI or similar
     setTimeout(() => {
@@ -78,19 +78,23 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
       setLoading(false);
     }, 2000); // Simulate API delay
   }, [skill]);
-  
+
   const handleSaveSprint = async () => {
     if (!user) return;
-    
+
     setLoading(true);
-    
+
     try {
+      // Generate a slug from the skill name
+      const slug = `custom-${skill.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
+
       // First create a custom sprint
       const { data: sprintData, error: sprintError } = await supabase
         .from('sprints')
         .insert([
           {
             title: `Custom: ${skill}`,
+            slug: slug,
             description: `A custom 30-day sprint to learn ${skill}`,
             category: 'Custom',
             difficulty: 'Beginner',
@@ -98,14 +102,14 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
           }
         ])
         .select();
-      
+
       if (sprintError) throw sprintError;
       if (!sprintData || sprintData.length === 0) throw new Error('Failed to create sprint');
-      
+
       const sprintId = sprintData[0].id;
-      
+
       // Then add the tasks as challenges
-      const challengePromises = tasks.map(task => 
+      const challengePromises = tasks.map(task =>
         supabase
           .from('challenges')
           .insert([{
@@ -115,9 +119,9 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
             day: task.day
           }])
       );
-      
+
       await Promise.all(challengePromises);
-      
+
       // Finally add the sprint to user_progress
       const { error: progressError } = await supabase
         .from('user_progress')
@@ -126,14 +130,14 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
           sprint_id: sprintId,
           start_date: new Date().toISOString()
         }]);
-      
+
       if (progressError) throw progressError;
-      
+
       toast({
         title: "Success!",
         description: `Your custom ${skill} sprint has been created and added to your dashboard.`,
       });
-      
+
       onComplete();
     } catch (error: any) {
       console.error("Error saving sprint:", error);
@@ -145,7 +149,7 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
       setLoading(false);
     }
   };
-  
+
   return (
     <Layout>
       <div className="bg-secondary py-12 px-4 sm:px-6 lg:px-8">
@@ -156,14 +160,14 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
           </p>
         </div>
       </div>
-      
+
       <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12">
             <Loader2 className="h-12 w-12 animate-spin text-skillpurple-500 mb-4" />
             <p className="text-muted-foreground">
-              {tasks.length === 0 
-                ? "Generating your personalized plan..." 
+              {tasks.length === 0
+                ? "Generating your personalized plan..."
                 : "Saving your custom sprint..."}
             </p>
           </div>
@@ -194,17 +198,17 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
                       </div>
                     </div>
                   ))}
-                  
+
                   {tasks.length > 10 && (
                     <div className="text-center text-muted-foreground text-sm pt-4">
                       + {tasks.length - 10} more tasks for your 30-day sprint
                     </div>
                   )}
                 </div>
-                
+
                 <div className="mt-8">
-                  <Button 
-                    onClick={handleSaveSprint} 
+                  <Button
+                    onClick={handleSaveSprint}
                     className="w-full bg-skillpurple-400 hover:bg-skillpurple-500"
                   >
                     Start My Journey to Learn {skill}
@@ -212,11 +216,11 @@ const AIPromptFlow: React.FC<AIPromptFlowProps> = ({ skill, onComplete }) => {
                 </div>
               </CardContent>
             </Card>
-            
+
             <div className="mt-6">
               <h3 className="font-semibold text-lg mb-2">What's Next?</h3>
               <p className="text-muted-foreground">
-                Once you start your journey, you'll see your daily tasks in your dashboard. 
+                Once you start your journey, you'll see your daily tasks in your dashboard.
                 Complete each task to build your streak and track your progress.
               </p>
             </div>
