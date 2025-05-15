@@ -1,76 +1,52 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { PostgrestError } from '@supabase/supabase-js';
 
-interface TablesResponse {
-  success: boolean;
-  error?: PostgrestError | null;
-  data?: any[];
-  message?: string;
-}
-
-// List of known tables in our database
-const KNOWN_TABLES = [
-  "challenges", "sprints", "comments", "community_posts", 
-  "contact_messages", "problem_reports", "streaks", 
-  "templates", "user_progress", "Users"
-] as const;
-
-// Type for known tables
-type KnownTable = typeof KNOWN_TABLES[number];
-
-// Function that checks if a string is a KnownTable
-function isKnownTable(tableName: string): tableName is KnownTable {
-  return KNOWN_TABLES.includes(tableName as KnownTable);
-}
-
-export const checkTable = async (tableName: string): Promise<TablesResponse> => {
+/**
+ * Check if all required tables exist in the Supabase database
+ * @returns Promise<Record<string, boolean>> Object with table names as keys and boolean indicating if they exist
+ */
+export const checkAllTablesExist = async (): Promise<Record<string, boolean>> => {
+  // Define the tables we need to check for
+  const requiredTables = [
+    'sprints',
+    'challenges',
+    'user_progress',
+    'streaks',
+  ];
+  
   try {
-    // Validate table name before query
-    if (!isKnownTable(tableName)) {
-      return {
-        success: false,
-        message: `Invalid table name: ${tableName}. Must be one of ${KNOWN_TABLES.join(', ')}`
-      };
-    }
-    
+    // Get list of all tables
     const { data, error } = await supabase
-      .from(tableName)
-      .select('*')
-      .limit(1);
+      .from('pg_catalog.pg_tables')
+      .select('tablename')
+      .eq('schemaname', 'public');
       
     if (error) {
-      return {
-        success: false,
-        error,
-        message: `Error checking ${tableName} table: ${error.message}`
-      };
+      console.error("Error fetching tables:", error);
+      throw error;
     }
     
-    return {
-      success: true,
-      data,
-      message: `Table ${tableName} exists and is accessible`
-    };
+    // Create a set of existing table names for easier lookup
+    const existingTables = new Set(data?.map(table => table.tablename) || []);
+    console.log("Existing tables:", existingTables);
     
-  } catch (err) {
-    const error = err as Error;
-    return {
-      success: false,
-      message: `Unexpected error checking ${tableName} table: ${error.message}`
-    };
+    // Build result object
+    const result: Record<string, boolean> = {};
+    requiredTables.forEach(table => {
+      result[table] = existingTables.has(table);
+    });
+    
+    return result;
+    
+  } catch (error) {
+    console.error("Error checking tables:", error);
+    // If there's an error, assume no tables exist
+    const result: Record<string, boolean> = {};
+    requiredTables.forEach(table => {
+      result[table] = false;
+    });
+    return result;
   }
 };
 
-// Helper function to check multiple tables
-export const checkTables = async (tableNames: string[]): Promise<Record<string, TablesResponse>> => {
-  const results: Record<string, TablesResponse> = {};
-  
-  for (const tableName of tableNames) {
-    results[tableName] = await checkTable(tableName);
-  }
-  
-  return results;
-};
-
-export default checkTables;
+export default { checkAllTablesExist };

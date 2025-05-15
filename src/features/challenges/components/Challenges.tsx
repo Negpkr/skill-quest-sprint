@@ -1,8 +1,8 @@
 
 import React from "react";
-import { useChallenges } from "@/features/challenges/hooks/useChallenges";
-import ChallengeHeader from "@/features/challenges/components/ChallengeHeader";
-import ChallengeFilters from "@/features/challenges/components/ChallengeFilters";
+import { useChallenges } from "@/hooks/useChallenges";
+import ChallengeHeader from "@/components/challenges/ChallengeHeader";
+import ChallengeFilters from "@/components/challenges/ChallengeFilters";
 import ChallengeGrid from "@/features/challenges/components/ChallengeGrid";
 
 const Challenges: React.FC = () => {

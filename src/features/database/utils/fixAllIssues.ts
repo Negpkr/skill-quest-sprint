@@ -1,8 +1,9 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
-import { fixAllDatabaseStructure } from "./fixDatabaseStructure";
+import fixAllDatabaseStructure from "./fixDatabaseStructure";
 import { checkAllTablesExist } from "./checkSupabaseTables";
-import { fixStreakIssues } from "./fixStreakIssues";
+import fixStreakIssues from "./fixStreakIssues";
 
 /**
  * Fix all issues in the application
@@ -42,8 +43,7 @@ export const fixAllIssues = async (): Promise<{success: boolean, message: string
     console.log("Step 3: Checking if there are any sprints...");
     const { data: sprints, error: sprintsError } = await supabase
       .from('sprints')
-      .select('count(*)')
-      .single();
+      .select('*', { count: 'exact', head: true });
 
     if (sprintsError) {
       return {
@@ -53,7 +53,7 @@ export const fixAllIssues = async (): Promise<{success: boolean, message: string
       };
     }
 
-    if (!sprints || sprints.count === 0) {
+    if (!sprints || sprints.length === 0) {
       return {
         success: false,
         message: "No sprints found. Please run the SQL in supabase/migrations/create_tables.sql to create sample data.",
@@ -65,8 +65,7 @@ export const fixAllIssues = async (): Promise<{success: boolean, message: string
     console.log("Step 4: Checking if there are any challenges...");
     const { data: challenges, error: challengesError } = await supabase
       .from('challenges')
-      .select('count(*)')
-      .single();
+      .select('*', { count: 'exact', head: true });
 
     if (challengesError) {
       return {
@@ -76,7 +75,7 @@ export const fixAllIssues = async (): Promise<{success: boolean, message: string
       };
     }
 
-    if (!challenges || challenges.count === 0) {
+    if (!challenges || challenges.length === 0) {
       return {
         success: false,
         message: "No challenges found. Please run the SQL in supabase/migrations/create_tables.sql to create sample data.",
