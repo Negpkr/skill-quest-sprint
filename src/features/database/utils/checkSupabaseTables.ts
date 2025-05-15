@@ -12,7 +12,7 @@ export const checkAllTablesExist = async (): Promise<Record<string, boolean>> =>
     'challenges',
     'user_progress',
     'streaks',
-  ];
+  ] as const;
   
   try {
     // We can't directly query pg_catalog.pg_tables, so we'll check each table individually
@@ -21,6 +21,7 @@ export const checkAllTablesExist = async (): Promise<Record<string, boolean>> =>
     for (const tableName of requiredTables) {
       try {
         // Try to query a single row from each table to check if it exists
+        // Type assertion to handle the strongly-typed Supabase client
         const { count, error } = await supabase
           .from(tableName)
           .select('*', { count: 'exact', head: true });
