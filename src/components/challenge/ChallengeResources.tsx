@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Sprint, Challenge } from "@/types/sprint";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
-import { Launch, InfoIcon } from "lucide-react";
+import { ArrowUp, InfoIcon } from "lucide-react"; // Using ArrowUp instead of Launch
 import AddChallengeDays from './AddChallengeDays';
 
 interface ChallengeResourcesProps {
@@ -40,7 +40,7 @@ const ChallengeResources: React.FC<ChallengeResourcesProps> = ({
           <ul className="space-y-2">
             {resources.map((resource, index) => (
               <li key={index} className="flex items-start">
-                <Launch className="h-4 w-4 mr-2 mt-1 flex-shrink-0" />
+                <ArrowUp className="h-4 w-4 mr-2 mt-1 flex-shrink-0" />
                 <Link
                   to={resource.url}
                   target="_blank"

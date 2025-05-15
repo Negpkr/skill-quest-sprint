@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import { motion, useInView, useAnimation, Variants } from 'framer-motion';
 
@@ -57,7 +58,7 @@ const ScrollAnimationWrapper: React.FC<ScrollAnimationWrapperProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { 
     once, 
-    threshold,
+    amount: threshold, // Using 'amount' instead of 'threshold'
     // Add a small amount of margin to trigger the animation slightly before the element is in view
     margin: "-100px 0px"
   });
