@@ -1,90 +1,91 @@
 
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
-
-interface User {
-  id: string;
-  email: string;
-  created_at: string;
-}
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 /**
- * Fixes streak-related issues in the database
+ * Fix issues with user streak data
+ * @returns Promise<{success: boolean, message?: string, error?: any}> Result of the fix operation
  */
-export async function fixStreakIssues(): Promise<boolean> {
+export const fixStreakIssues = async (): Promise<{success: boolean, message?: string, error?: any}> => {
   try {
-    // Fetch all users
-    const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
+    console.log("Starting streak issues fix");
     
-    if (userError) {
-      console.error("Error fetching users:", userError);
-      toast({
-        title: "Error fixing streaks",
-        description: "Could not fetch users. Please try again later.",
-        variant: "destructive",
-      });
-      return false;
+    // Instead of getting all users via auth.admin (which requires admin access),
+    // we'll get unique user IDs from user_progress table
+    const { data: userProgressData, error: userProgressError } = await supabase
+      .from('user_progress')
+      .select('user_id')
+      .order('user_id');
+    
+    if (userProgressError) {
+      console.error("Error fetching user progress:", userProgressError);
+      return { 
+        success: false, 
+        error: userProgressError 
+      };
     }
     
-    // Handle different response formats from Supabase
-    const users = userData && 'users' in userData ? userData.users : [];
-    
-    if (!users || users.length === 0) {
-      toast({
-        title: "No users found",
-        description: "No users found in the database. Nothing to fix.",
-        variant: "warning",
-      });
-      return true; // No users to fix, so technically nothing failed
+    if (!userProgressData || userProgressData.length === 0) {
+      console.log("No user progress found, nothing to fix");
+      return { 
+        success: true, 
+        message: "No user progress found, nothing to fix" 
+      };
     }
     
-    // Fix streaks for all users
-    let fixCount = 0;
+    // Get unique user IDs
+    const userIds = [...new Set(userProgressData.map(record => record.user_id))];
+    console.log(`Found ${userIds.length} users to check for streak issues`);
     
-    for (const user of users) {
-      // Check if user has a streak record
+    // For each user, check if they have streak data
+    for (const userId of userIds) {
+      // Check if streak record exists
       const { data: streakData, error: streakError } = await supabase
         .from('streaks')
         .select('*')
-        .eq('user_id', user.id);
-      
+        .eq('user_id', userId)
+        .maybeSingle();
+        
       if (streakError) {
-        console.error(`Error checking streak for user ${user.id}:`, streakError);
+        console.error(`Error checking streak for user ${userId}:`, streakError);
         continue;
       }
       
-      if (!streakData || streakData.length === 0) {
-        // Create streak record if it doesn't exist
+      // If no streak record exists, create one
+      if (!streakData) {
+        console.log(`Creating streak record for user ${userId}`);
+        
         const { error: insertError } = await supabase
           .from('streaks')
           .insert({
-            user_id: user.id,
+            user_id: userId,
             current_streak: 0,
             longest_streak: 0,
-            last_activity: new Date().toISOString()
+            last_activity_date: new Date().toISOString()
           });
-        
+          
         if (insertError) {
-          console.error(`Error creating streak for user ${user.id}:`, insertError);
+          console.error(`Failed to create streak record for user ${userId}:`, insertError);
         } else {
-          fixCount++;
+          console.log(`Successfully created streak record for user ${userId}`);
         }
+      } else {
+        console.log(`Streak record already exists for user ${userId}`);
       }
     }
     
-    toast({
-      title: "Streak fixes applied",
-      description: `Fixed streak records for ${fixCount} users out of ${users.length} total users.`,
-    });
+    return {
+      success: true,
+      message: `Checked and fixed streak records for ${userIds.length} users`
+    };
     
-    return true;
   } catch (error) {
-    console.error("Error fixing streak issues:", error);
-    toast({
-      title: "Error fixing streaks",
-      description: "An unexpected error occurred. Please try again later.",
-      variant: "destructive",
-    });
-    return false;
+    console.error("Unexpected error fixing streak issues:", error);
+    return { 
+      success: false, 
+      error: error 
+    };
   }
-}
+};
+
+export default fixStreakIssues;

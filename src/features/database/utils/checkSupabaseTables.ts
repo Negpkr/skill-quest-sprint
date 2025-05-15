@@ -1,59 +1,50 @@
 
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { supabase } from "@/integrations/supabase/client";
 
 /**
- * Checks if all required tables exist in the Supabase database
- * Returns true if all tables exist, false otherwise
+ * Check if all required tables exist in the Supabase database
+ * @returns Promise<Record<string, boolean>> Object with table names as keys and boolean indicating if they exist
  */
-export async function checkSupabaseTables(): Promise<boolean> {
+export const checkAllTablesExist = async (): Promise<Record<string, boolean>> => {
+  // Define the tables we need to check for
   const requiredTables = [
     'sprints',
     'challenges',
     'user_progress',
     'streaks',
-  ] as const; // Using const assertion to create a readonly tuple type
+  ] as const;
   
   try {
     // We can't directly query pg_catalog.pg_tables, so we'll check each table individually
-    let allTablesExist = true;
+    const result: Record<string, boolean> = {};
     
     for (const tableName of requiredTables) {
       try {
         // Try to query a single row from each table to check if it exists
+        // Type assertion to handle the strongly-typed Supabase client
         const { count, error } = await supabase
           .from(tableName)
           .select('*', { count: 'exact', head: true });
-
-        if (error) {
-          console.error(`Error checking table ${tableName}:`, error);
-          allTablesExist = false;
-        }
-      } catch (err) {
-        console.error(`Error checking table ${tableName}:`, err);
-        allTablesExist = false;
+        
+        // If there's no error, the table exists
+        result[tableName] = !error;
+      } catch {
+        result[tableName] = false;
       }
     }
     
-    if (!allTablesExist) {
-      toast({
-        title: "Database structure issue detected",
-        description: "Some required tables are missing. Please visit the Database Setup page.",
-        variant: "destructive",
-      });
-      return false;
-    }
+    console.log("Table existence check result:", result);
+    return result;
     
-    return true;
   } catch (error) {
-    console.error("Error checking database tables:", error);
-    
-    toast({
-      title: "Database error",
-      description: "Could not check database structure. Please reload the page.",
-      variant: "destructive",
+    console.error("Error checking tables:", error);
+    // If there's an error, assume no tables exist
+    const result: Record<string, boolean> = {};
+    requiredTables.forEach(table => {
+      result[table] = false;
     });
-    
-    return false;
+    return result;
   }
-}
+};
+
+export default checkAllTablesExist;
