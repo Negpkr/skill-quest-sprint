@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import NavbarBrand from "@/components/navbar/NavbarBrand";
-import NavbarDesktop from "@/components/navbar/NavbarDesktop";
-import NavbarMobile from "@/components/navbar/NavbarMobile";
+import NavbarDesktop from "@/features/common/components/NavbarDesktop";
+import NavbarMobile from "@/features/common/components/NavbarMobile";
 
 interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = () => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   

@@ -2,105 +2,78 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 
-export const fixStreakIssues = async (userId: string) => {
+interface FixResult {
+  success: boolean;
+  message: string;
+  details?: any;
+}
+
+export const fixStreakIssues = async (userId: string): Promise<FixResult> => {
   if (!userId) {
-    console.log('No user ID provided for streak fixing');
-    return { success: false, message: 'No user ID provided' };
+    return {
+      success: false,
+      message: 'User ID is required'
+    };
   }
-  
+
   try {
-    console.log('Fixing streak issues for user:', userId);
-    
-    // Check if user has streak record
+    // Check if user has a streak record
     const { data: streakData, error: streakError } = await supabase
       .from('streaks')
       .select('*')
       .eq('user_id', userId)
       .maybeSingle();
-      
-    if (streakError && streakError.code !== 'PGRST116') {
+
+    if (streakError) {
       console.error('Error checking streak record:', streakError);
-      throw streakError;
+      return {
+        success: false,
+        message: 'Failed to check streak record',
+        details: streakError
+      };
     }
-    
-    // If no streak record exists, create one
+
     if (!streakData) {
-      console.log('No streak record found, creating new record');
-      
-      const { error: createError } = await supabase
+      // Create a new streak record for the user
+      const { error: insertError } = await supabase
         .from('streaks')
         .insert([{
           user_id: userId,
           current_streak: 0,
           longest_streak: 0,
-          last_activity_date: null
+          last_activity_date: new Date().toISOString()
         }]);
-        
-      if (createError) {
-        console.error('Error creating streak record:', createError);
-        throw createError;
+
+      if (insertError) {
+        console.error('Error creating streak record:', insertError);
+        return {
+          success: false,
+          message: 'Failed to create streak record',
+          details: insertError
+        };
       }
-      
-      console.log('Streak record created successfully');
-      
-      // Fetch the newly created record
-      const { data: newStreakData, error: fetchError } = await supabase
-        .from('streaks')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
-        
-      if (fetchError) {
-        console.error('Error fetching new streak record:', fetchError);
-        throw fetchError;
-      }
-      
+
+      toast({
+        title: 'Streak Created',
+        description: 'A new streak record has been created for you'
+      });
+
       return {
         success: true,
-        message: 'Created new streak record',
-        data: newStreakData
+        message: 'New streak record created successfully'
+      };
+    } else {
+      // Streak record exists, no action needed
+      return {
+        success: true,
+        message: 'Streak record exists, no action needed'
       };
     }
-    
-    // Check if streak record has nulls that need to be fixed
-    const needsFix = streakData.current_streak === null || 
-                     streakData.longest_streak === null;
-                     
-    if (needsFix) {
-      console.log('Fixing null values in streak record');
-      
-      const { error: updateError } = await supabase
-        .from('streaks')
-        .update({
-          current_streak: streakData.current_streak ?? 0,
-          longest_streak: streakData.longest_streak ?? 0
-        })
-        .eq('user_id', userId);
-        
-      if (updateError) {
-        console.error('Error updating streak record:', updateError);
-        throw updateError;
-      }
-      
-      console.log('Streak record fixed successfully');
-    } else {
-      console.log('Streak record is already valid, no fixes needed');
-    }
-    
-    return {
-      success: true,
-      message: needsFix ? 'Fixed streak record' : 'No fixes needed',
-      data: streakData
-    };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fixing streak issues:', error);
-    
-    toast({
-      title: 'Error',
-      description: 'Failed to fix streak issues. Please try again.',
-      variant: 'destructive',
-    });
-    
-    return { success: false, message: 'Failed to fix streak issues', error };
+    return {
+      success: false,
+      message: `Error fixing streak issues: ${error.message || error}`
+    };
   }
 };

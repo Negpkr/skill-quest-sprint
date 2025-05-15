@@ -1,50 +1,56 @@
 
-import React, { useEffect } from "react";
-import { useChallenges } from "@/hooks/useChallenges";
-import Layout from "@/components/Layout";
-import ChallengeHeader from "@/components/challenges/ChallengeHeader";
-import ChallengeFilters from "@/components/challenges/ChallengeFilters";
-import ChallengeGrid from "@/components/challenges/ChallengeGrid";
-import { Skeleton } from "@/components/ui/skeleton";
+import React from "react";
+import { useChallenges } from "@/features/challenges/hooks/useChallenges";
+import ChallengeHeader from "./ChallengeHeader";
+import ChallengeFilters from "./ChallengeFilters";
+import ChallengeGrid from "./ChallengeGrid";
 
 const Challenges: React.FC = () => {
   const {
-    filteredChallenges,
-    allChallenges,
-    isLoading,
-    categories,
-    difficulties,
-    selectedCategory,
-    selectedDifficulty,
     searchTerm,
-    setSelectedCategory,
-    setSelectedDifficulty,
     setSearchTerm,
-    resetFilters
+    selectedCategory,
+    setSelectedCategory,
+    selectedDifficulty,
+    setSelectedDifficulty,
+    filteredChallenges,
+    isLoading,
+    resetFilters,
+    categories,
+    difficulties
   } = useChallenges();
-
+  
   return (
-    <Layout>
-      <ChallengeHeader />
-      
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <ChallengeFilters 
-          selectedCategory={selectedCategory}
-          selectedDifficulty={selectedDifficulty}
-          searchTerm={searchTerm}
-          setSelectedCategory={setSelectedCategory}
-          setSelectedDifficulty={setSelectedDifficulty}
-          setSearchTerm={setSearchTerm}
-          resetFilters={resetFilters}
-        />
-        
-        <ChallengeGrid 
-          challenges={filteredChallenges}
-          isLoading={isLoading}
-          resetFilters={resetFilters}
-        />
+    <>
+      <div className="bg-gradient-to-b from-dark-background to-black py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="bg-grid absolute inset-0 opacity-10"></div>
+        <div className="max-w-7xl mx-auto">
+          <ChallengeHeader />
+          
+          <ChallengeFilters 
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            selectedDifficulty={selectedDifficulty}
+            setSelectedDifficulty={setSelectedDifficulty}
+            resetFilters={resetFilters}
+            categories={categories}
+            difficulties={difficulties}
+          />
+        </div>
       </div>
-    </Layout>
+      
+      <div className="py-12 px-4 sm:px-6 lg:px-8 bg-background">
+        <div className="max-w-7xl mx-auto">
+          <ChallengeGrid 
+            challenges={filteredChallenges}
+            isLoading={isLoading}
+            resetFilters={resetFilters}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 

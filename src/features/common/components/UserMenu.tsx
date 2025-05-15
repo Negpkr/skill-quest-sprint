@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserCircle, Settings, LogOut } from 'lucide-react';
 
-interface UserMenuProps {
+export interface UserMenuProps {
   user: User | null;
   handleSignOut: () => Promise<void>;
 }

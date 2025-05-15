@@ -90,9 +90,8 @@ const ChallengeDetail: React.FC = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <SprintOverview challenge={challenge} handleStartSprint={handleStartSprint} />
-          {/* Fix by passing parsedResources as resourceLinks */}
           <SprintResources 
-            resourceLinks={parsedResources}
+            challenge={challenge} 
             handleStartSprint={handleStartSprint} 
           />
         </div>

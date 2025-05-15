@@ -58,8 +58,7 @@ const ScrollAnimationWrapper: React.FC<ScrollAnimationWrapperProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { 
     once, 
-    // Remove threshold as it's not supported in the type
-    // Instead use amount which is the correct property
+    // Use amount instead of threshold for framer-motion's useInView
     amount: threshold,
     // Add a small amount of margin to trigger the animation slightly before the element is in view
     margin: "-100px 0px"

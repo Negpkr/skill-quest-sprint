@@ -1,70 +1,85 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/use-toast';
 
-export const fixDatabaseStructure = async () => {
+interface FixResult {
+  success: boolean;
+  message: string;
+  details?: any;
+}
+
+export const fixDatabaseStructure = async (): Promise<FixResult> => {
   try {
-    console.log('Running database structure fixes...');
+    // Step 1: Check if current_day column exists in user_progress
+    console.log('Checking if current_day column exists in user_progress...');
     
-    // Check if user_progress table exists
-    const { data: tableExists, error: tableError } = await supabase
-      .from('user_progress')
-      .select('id')
-      .limit(1);
+    const { data: currentDayCheck, error: currentDayCheckError } = await supabase
+      .rpc('check_column_exists', {
+        p_table_name: 'user_progress',
+        p_column_name: 'current_day'
+      });
       
-    if (tableError && tableError.code === '42P01') {
-      console.log('user_progress table does not exist, creating it...');
+    if (currentDayCheckError) {
+      console.error('Error checking current_day column:', currentDayCheckError);
       
-      // Create user_progress table if it doesn't exist
-      const { error: createError } = await supabase.rpc('create_user_progress_table');
+      // Try to add the column anyway
+      const { error: addCurrentDayError } = await supabase
+        .rpc('add_column_if_not_exists', {
+          p_table: 'user_progress',
+          p_column: 'current_day',
+          p_type: 'integer',
+          p_default: '1'
+        });
       
-      if (createError) {
-        console.error('Error creating user_progress table:', createError);
-        throw createError;
+      if (addCurrentDayError) {
+        console.error('Error adding current_day column:', addCurrentDayError);
+        return {
+          success: false,
+          message: 'Failed to add current_day column',
+          details: addCurrentDayError
+        };
       }
-      
-      console.log('user_progress table created successfully');
-    } else {
-      console.log('user_progress table already exists');
     }
     
-    // Check if current_day column exists
-    const { data: columns, error: columnsError } = await supabase.rpc('check_column_exists', {
-      p_table: 'user_progress',
-      p_column: 'current_day'
-    });
+    // Step 2: Check if completed column exists in user_progress
+    console.log('Checking if completed column exists in user_progress...');
     
-    if (columnsError) {
-      console.error('Error checking columns:', columnsError);
-      throw columnsError;
-    }
-    
-    if (!columns || columns.length === 0) {
-      console.log('current_day column does not exist, adding it...');
+    const { data: completedCheck, error: completedCheckError } = await supabase
+      .rpc('check_column_exists', {
+        p_table_name: 'user_progress',
+        p_column_name: 'completed'
+      });
       
-      // Add current_day column
-      const { error: addColumnError } = await supabase.rpc('add_current_day_column');
+    if (completedCheckError) {
+      console.error('Error checking completed column:', completedCheckError);
       
-      if (addColumnError) {
-        console.error('Error adding current_day column:', addColumnError);
-        throw addColumnError;
+      // Try to add the column anyway
+      const { error: addCompletedError } = await supabase
+        .rpc('add_column_if_not_exists', {
+          p_table: 'user_progress',
+          p_column: 'completed',
+          p_type: 'boolean',
+          p_default: 'false'
+        });
+      
+      if (addCompletedError) {
+        console.error('Error adding completed column:', addCompletedError);
+        return {
+          success: false,
+          message: 'Failed to add completed column',
+          details: addCompletedError
+        };
       }
-      
-      console.log('current_day column added successfully');
-    } else {
-      console.log('current_day column already exists');
     }
     
-    return { success: true, message: 'Database structure fixed successfully' };
-  } catch (error) {
+    return {
+      success: true,
+      message: 'Database structure fixed successfully'
+    };
+  } catch (error: any) {
     console.error('Error fixing database structure:', error);
-    
-    toast({
-      title: 'Error',
-      description: 'Failed to fix database structure. Please try again.',
-      variant: 'destructive',
-    });
-    
-    return { success: false, message: 'Failed to fix database structure', error };
+    return {
+      success: false,
+      message: `Error fixing database structure: ${error.message || error}`
+    };
   }
 };

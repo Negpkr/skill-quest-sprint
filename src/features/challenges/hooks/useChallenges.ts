@@ -1,7 +1,16 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ChallengeProps } from "@/features/challenges/components/ChallengeCard";
+
+export interface ChallengeProps {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  difficulty: string;
+  duration: number;
+  resources?: string;
+}
 
 export const useChallenges = () => {
   const [allChallenges, setAllChallenges] = useState<ChallengeProps[]>([]);
@@ -36,8 +45,8 @@ export const useChallenges = () => {
           description: sprint.description,
           category: sprint.category,
           difficulty: sprint.difficulty,
-          duration: sprint.duration,
-          resources: sprint.resources
+          duration: sprint.duration || 30,
+          resources: sprint.resources || ""
         }));
         
         setAllChallenges(typedSprintsData);

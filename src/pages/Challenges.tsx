@@ -16,7 +16,9 @@ const Sprints: React.FC = () => {
     setSelectedDifficulty,
     filteredChallenges,
     isLoading,
-    resetFilters
+    resetFilters,
+    categories,
+    difficulties
   } = useChallenges();
   
   // Handler to ensure resetFilters is called with proper context
@@ -40,6 +42,8 @@ const Sprints: React.FC = () => {
             selectedDifficulty={selectedDifficulty}
             setSelectedDifficulty={setSelectedDifficulty}
             resetFilters={handleResetFilters}
+            categories={categories}
+            difficulties={difficulties}
           />
         </div>
       </div>
