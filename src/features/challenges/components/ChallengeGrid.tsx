@@ -1,59 +1,64 @@
 
 import React from "react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import ChallengeCard, { ChallengeProps } from "@/components/ChallengeCard";
-import { containerVariants, itemVariants, emptyStateAnimations } from "./animations";
+import { ChallengeProps } from "@/features/challenges/components/ChallengeCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface ChallengeGridProps {
+export interface ChallengeGridProps {
   challenges: ChallengeProps[];
   isLoading: boolean;
   resetFilters: () => void;
 }
 
-const ChallengeGrid: React.FC<ChallengeGridProps> = ({
-  challenges,
-  isLoading,
-  resetFilters
-}) => {
+const ChallengeGrid: React.FC<ChallengeGridProps> = ({ challenges, isLoading, resetFilters }) => {
+  const ChallengeCard = React.lazy(() => import("@/features/challenges/components/ChallengeCard"));
+
+  // Loading skeletons
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin h-10 w-10 border-4 border-skillpurple-400 rounded-full border-t-transparent"></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        {Array(6).fill(0).map((_, index) => (
+          <div key={index} className="border rounded-lg p-4 h-64">
+            <div className="flex gap-2 mb-3">
+              <Skeleton className="h-5 w-16" />
+              <Skeleton className="h-5 w-20" />
+            </div>
+            <Skeleton className="h-7 w-3/4 mb-4" />
+            <Skeleton className="h-20 w-full mb-6" />
+            <div className="flex justify-between items-center pt-4">
+              <Skeleton className="h-5 w-16" />
+              <Skeleton className="h-9 w-20" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
 
+  // No results
   if (challenges.length === 0) {
     return (
-      <motion.div 
-        className="text-center py-12"
-        {...emptyStateAnimations}
-      >
+      <div className="text-center py-12">
         <h3 className="text-xl font-medium mb-2">No challenges found</h3>
-        <p className="text-muted-foreground mb-6">
-          Try adjusting your search or filters to find what you're looking for.
-        </p>
-        <Button onClick={resetFilters}>
-          Reset Filters
-        </Button>
-      </motion.div>
+        <p className="text-muted-foreground mb-4">Try adjusting your filters or search query.</p>
+        <button 
+          onClick={resetFilters}
+          className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition-colors"
+        >
+          Clear filters
+        </button>
+      </div>
     );
   }
 
+  // Render challenges
   return (
-    <motion.div 
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
       {challenges.map((challenge) => (
-        <motion.div key={challenge.id} variants={itemVariants}>
-          <ChallengeCard challenge={challenge} />
-        </motion.div>
+        <React.Suspense key={challenge.id} fallback={<div className="border rounded-lg p-4 h-64 animate-pulse bg-gray-100" />}>
+          <ChallengeCard {...challenge} />
+        </React.Suspense>
       ))}
-    </motion.div>
+    </div>
   );
 };
 
