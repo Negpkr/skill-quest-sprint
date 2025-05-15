@@ -31,8 +31,15 @@ export async function fixDatabaseStructure(): Promise<boolean> {
       table_name: string;
     }
     
+    // Define a proper return type for the RPC call
+    type ColumnInfo = {
+      column_name: string;
+      data_type: string;
+      is_nullable: string;
+    };
+    
     const { data: userProgressColumns, error: columnCheckError } = await supabase
-      .rpc<Record<string, any>, GetColumnsParams>('get_columns_for_table', { 
+      .rpc<ColumnInfo[], GetColumnsParams>('get_columns_for_table', { 
         table_name: 'user_progress' 
       });
     
