@@ -5,7 +5,7 @@ import { Challenge } from "@/types/sprint";
 import { useChallengeFetch } from "./useChallengeFetch";
 import { useChallengeProgress } from "./useChallengeProgress";
 import { useChallengeCompletion } from "./useChallengeCompletion";
-import { useStreakData } from "./useStreakData";
+import { useStreakData } from "@/hooks/useStreakData";
 import { UseChallengeReturn } from "@/types/sprint";
 
 export const useChallenge = (id: string | undefined): UseChallengeReturn => {
@@ -13,6 +13,11 @@ export const useChallenge = (id: string | undefined): UseChallengeReturn => {
 
   // Get streak data and refresh function
   const { refreshStreak } = useStreakData(user?.id);
+
+  // Make a wrapper for refreshStreak that returns a Promise
+  const refreshStreakAsync = async () => {
+    return Promise.resolve(refreshStreak());
+  };
 
   // Use the new hooks
   const { sprint, challenges, isLoading, notFound } = useChallengeFetch(id);
@@ -26,7 +31,7 @@ export const useChallenge = (id: string | undefined): UseChallengeReturn => {
     user,
     currentDay,
     setTaskCompleted,
-    refreshStreak
+    refreshStreakAsync
   );
 
   // Helper function to get the current day's challenge

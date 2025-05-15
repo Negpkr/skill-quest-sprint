@@ -11,7 +11,7 @@ import NavbarMobile from "./navbar/NavbarMobile";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   
   const handleSignOut = async () => {
@@ -26,7 +26,10 @@ const Navbar: React.FC = () => {
           <NavbarBrand />
           
           {/* Desktop Navigation */}
-          <NavbarDesktop />
+          <NavbarDesktop 
+            user={user}
+            handleSignOut={handleSignOut}
+          />
           
           {/* Mobile Navigation Toggle */}
           <div className="md:hidden flex items-center">
@@ -45,6 +48,7 @@ const Navbar: React.FC = () => {
         isOpen={isOpen} 
         setIsOpen={setIsOpen}
         handleSignOut={handleSignOut}
+        user={user}
       />
     </nav>
   );

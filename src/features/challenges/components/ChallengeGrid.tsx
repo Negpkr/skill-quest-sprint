@@ -2,10 +2,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import ChallengeCard, { ChallengeProps } from "@/components/ChallengeCard";
+import ChallengeCard, { ChallengeProps } from "@/features/challenges/components/ChallengeCard";
 import { containerVariants, itemVariants, emptyStateAnimations } from "./animations";
 
-interface ChallengeGridProps {
+export interface ChallengeGridProps {
   challenges: ChallengeProps[];
   isLoading: boolean;
   resetFilters: () => void;

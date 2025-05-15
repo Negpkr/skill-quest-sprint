@@ -1,26 +1,17 @@
 
-import React, { useCallback } from "react";
+import React from "react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, X } from "lucide-react";
-import { motion } from "framer-motion";
-import { filterAnimations } from "./animations";
-import { categories, difficulties } from "@/hooks/useChallenges";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { categories, difficulties } from "@/features/challenges/hooks/useChallenges";
 
 interface ChallengeFiltersProps {
   searchTerm: string;
-  setSearchTerm: (value: string) => void;
+  setSearchTerm: (term: string) => void;
   selectedCategory: string;
-  setSelectedCategory: (value: string) => void;
+  setSelectedCategory: (category: string) => void;
   selectedDifficulty: string;
-  setSelectedDifficulty: (value: string) => void;
+  setSelectedDifficulty: (difficulty: string) => void;
   resetFilters: () => void;
 }
 
@@ -31,88 +22,65 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
   setSelectedCategory,
   selectedDifficulty,
   setSelectedDifficulty,
-  resetFilters
+  resetFilters,
 }) => {
-  // Local handler to ensure resetFilters is properly called
-  const handleResetFilters = useCallback(() => {
-    console.log("Reset button clicked");
-    resetFilters();
-    // Explicitly set values locally as well to ensure UI updates
-    setSearchTerm("");
-    setSelectedCategory("All");
-    setSelectedDifficulty("All");
-  }, [resetFilters, setSearchTerm, setSelectedCategory, setSelectedDifficulty]);
-
-  // Check if any filters are active
-  const hasActiveFilters = 
-    searchTerm !== "" || 
-    selectedCategory !== "All" || 
-    selectedDifficulty !== "All";
-
   return (
-    <motion.div 
-      className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 mb-8"
-      {...filterAnimations}
-    >
-      {/* Search */}
-      <div className="w-full sm:w-64 md:w-96 relative">
-        <Search className="absolute left-2.5 top-2.5 h-5 w-5 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search sprints..."
-          className="pl-9 bg-dark-card border-dark-border"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        {searchTerm && (
-          <button 
-            className="absolute right-2.5 top-2.5 h-5 w-5 text-muted-foreground hover:text-foreground"
-            onClick={() => setSearchTerm("")}
-            aria-label="Clear search"
+    <div className="mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Search Input */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <Input
+            type="search"
+            placeholder="Search challenges..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 bg-background"
+          />
+        </div>
+        
+        {/* Category Filter */}
+        <div>
+          <select
+            className="w-full h-10 px-3 rounded-md bg-background border border-input text-foreground"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
           >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
-      
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2 justify-center sm:justify-end w-full sm:w-auto">
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
             {categories.map((category) => (
-              <SelectItem key={category} value={category}>
+              <option key={category} value={category}>
                 {category === "All" ? "All Categories" : category}
-              </SelectItem>
+              </option>
             ))}
-          </SelectContent>
-        </Select>
+          </select>
+        </div>
         
-        <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Difficulty" />
-          </SelectTrigger>
-          <SelectContent>
+        {/* Difficulty Filter */}
+        <div className="flex space-x-2">
+          <select
+            className="w-full h-10 px-3 rounded-md bg-background border border-input text-foreground"
+            value={selectedDifficulty}
+            onChange={(e) => setSelectedDifficulty(e.target.value)}
+          >
             {difficulties.map((difficulty) => (
-              <SelectItem key={difficulty} value={difficulty}>
+              <option key={difficulty} value={difficulty}>
                 {difficulty === "All" ? "All Difficulties" : difficulty}
-              </SelectItem>
+              </option>
             ))}
-          </SelectContent>
-        </Select>
-        
-        <Button
-          variant="outline"
-          onClick={handleResetFilters}
-          disabled={!hasActiveFilters}
-          className="min-w-[80px]"
-        >
-          Reset
-        </Button>
+          </select>
+          
+          {/* Reset Button */}
+          <Button 
+            variant="outline" 
+            onClick={resetFilters}
+            className="whitespace-nowrap"
+          >
+            Reset
+          </Button>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
