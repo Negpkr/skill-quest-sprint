@@ -26,11 +26,15 @@ export async function fixDatabaseStructure(): Promise<boolean> {
     }
     
     // Check if user_progress table has current_day column
-    // Use a properly typed parameter object for the RPC call
+    // Define a proper interface for the RPC parameters
+    interface GetColumnsParams {
+      table_name: string;
+    }
+    
     const { data: userProgressColumns, error: columnCheckError } = await supabase
-      .rpc('get_columns_for_table', { 
+      .rpc<Record<string, any>>('get_columns_for_table', { 
         table_name: 'user_progress' 
-      } as any); // Using 'any' as a temporary solution to bypass type checking
+      } as GetColumnsParams);
     
     if (columnCheckError || !userProgressColumns) {
       console.error("Error checking user_progress columns:", columnCheckError);
