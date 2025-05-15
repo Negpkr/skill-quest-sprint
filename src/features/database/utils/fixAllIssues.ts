@@ -2,7 +2,7 @@
 import { checkSupabaseTables } from './checkSupabaseTables';
 import { fixDatabaseStructure } from './fixDatabaseStructure';
 import { fixStreakIssues } from './fixStreakIssues';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 /**
  * Attempts to fix all known database issues
