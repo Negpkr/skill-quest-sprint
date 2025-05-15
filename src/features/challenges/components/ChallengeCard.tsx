@@ -16,14 +16,30 @@ export interface ChallengeProps {
   resources?: string;
 }
 
-const ChallengeCard: React.FC<ChallengeProps> = ({
-  id,
-  title,
-  description,
-  category,
-  difficulty,
-  duration = 30
-}) => {
+// Component supports both direct props and a challenge prop
+interface ChallengeCardComponentProps {
+  challenge?: ChallengeProps;
+  id?: string;
+  title?: string;
+  description?: string;
+  category?: string;
+  difficulty?: string;
+  duration?: number;
+  resources?: string;
+}
+
+const ChallengeCard: React.FC<ChallengeCardComponentProps> = (props) => {
+  // Extract properties from either challenge prop or direct props
+  const challenge = props.challenge || props;
+  const {
+    id,
+    title,
+    description,
+    category,
+    difficulty,
+    duration = 30
+  } = challenge;
+
   const difficultyClass = 
     difficulty === "Beginner" 
       ? "bg-softgreen text-green-800" 

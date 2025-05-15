@@ -1,124 +1,114 @@
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
-import { fixAllDatabaseStructure } from "./fixDatabaseStructure";
-import { checkAllTablesExist } from "./checkSupabaseTables";
-import { fixStreakIssues } from "./fixStreakIssues";
 
-/**
- * Fix all issues in the application
- * @returns Promise<{success: boolean, message: string, details: any}> - Result of the fix operation
- */
-export const fixAllIssues = async (): Promise<{success: boolean, message: string, details: any}> => {
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
+import { fixDatabaseStructure } from './fixDatabaseStructure';
+import { checkSupabaseTables } from './checkSupabaseTables';
+import { fixStreakIssues } from './fixStreakIssues';
+
+interface FixResult {
+  success: boolean;
+  message: string;
+  details?: any;
+}
+
+export const fixAllIssues = async (userId: string): Promise<FixResult> => {
+  if (!userId) {
+    return { success: false, message: 'No user ID provided' };
+  }
+  
   try {
+    console.log('Starting comprehensive database fixes...');
+    
     // Step 1: Check if all required tables exist
-    console.log("Step 1: Checking if all required tables exist...");
-    const tableStatus = await checkAllTablesExist();
-
-    const missingTables = Object.entries(tableStatus)
-      .filter(([_, exists]) => !exists)
-      .map(([name]) => name);
-
-    if (missingTables.length > 0) {
+    const tablesCheck = await checkSupabaseTables();
+    if (!tablesCheck.success) {
+      console.log('Tables check failed:', tablesCheck.message);
       return {
         success: false,
-        message: `Missing tables: ${missingTables.join(', ')}. Please run the SQL in supabase/migrations/create_tables.sql to create them.`,
-        details: { tableStatus }
+        message: 'Database tables check failed',
+        details: tablesCheck
       };
     }
-
-    // Step 2: Fix database structure issues
-    console.log("Step 2: Fixing database structure issues...");
-    const structureResult = await fixAllDatabaseStructure();
-
+    
+    // Step 2: Fix database structure
+    const structureResult = await fixDatabaseStructure();
     if (!structureResult.success) {
+      console.log('Database structure fix failed:', structureResult.message);
       return {
         success: false,
-        message: `Database structure issues: ${structureResult.message}`,
-        details: { structureResult }
+        message: 'Database structure fix failed',
+        details: structureResult
       };
     }
-
-    // Step 3: Check if there are any sprints
-    console.log("Step 3: Checking if there are any sprints...");
-    const { data: sprints, error: sprintsError } = await supabase
-      .from('sprints')
-      .select('count(*)')
-      .single();
-
-    if (sprintsError) {
-      return {
-        success: false,
-        message: `Error checking sprints: ${sprintsError.message}`,
-        details: { sprintsError }
-      };
-    }
-
-    if (!sprints || sprints.count === 0) {
-      return {
-        success: false,
-        message: "No sprints found. Please run the SQL in supabase/migrations/create_tables.sql to create sample data.",
-        details: { sprints }
-      };
-    }
-
-    // Step 4: Check if there are any challenges
-    console.log("Step 4: Checking if there are any challenges...");
-    const { data: challenges, error: challengesError } = await supabase
-      .from('challenges')
-      .select('count(*)')
-      .single();
-
-    if (challengesError) {
-      return {
-        success: false,
-        message: `Error checking challenges: ${challengesError.message}`,
-        details: { challengesError }
-      };
-    }
-
-    if (!challenges || challenges.count === 0) {
-      return {
-        success: false,
-        message: "No challenges found. Please run the SQL in supabase/migrations/create_tables.sql to create sample data.",
-        details: { challenges }
-      };
-    }
-
-    // Step 5: Fix streak issues
-    console.log("Step 5: Fixing streak issues...");
-    const streakResult = await fixStreakIssues();
-
+    
+    // Step 3: Fix user streak issues
+    const streakResult = await fixStreakIssues(userId);
     if (!streakResult.success) {
+      console.log('Streak fix failed:', streakResult.message);
       return {
         success: false,
-        message: `Error fixing streak issues: ${streakResult.error}`,
-        details: { streakResult }
+        message: 'Streak fix failed',
+        details: streakResult
       };
     }
-
-    // All checks passed
+    
+    // Step 4: Test if a simple query works without errors
+    try {
+      const { error } = await supabase
+        .from('user_progress')
+        .select('id')
+        .eq('user_id', userId)
+        .limit(1);
+        
+      if (error) {
+        // Handle error without using count property
+        console.error('Test query failed:', error.message);
+        return {
+          success: false,
+          message: 'Test query failed',
+          details: { error: error.message }
+        };
+      }
+    } catch (testError: any) {
+      // Handle error without using count property
+      console.error('Test query exception:', testError.message);
+      return {
+        success: false,
+        message: 'Test query exception',
+        details: { error: testError.message }
+      };
+    }
+    
+    console.log('All database fixes completed successfully');
+    
+    toast({
+      title: 'Success',
+      description: 'All database issues fixed successfully',
+    });
+    
     return {
       success: true,
-      message: "All issues fixed successfully",
+      message: 'All database issues fixed successfully',
       details: {
-        tableStatus,
-        structureResult,
-        sprints,
-        challenges,
-        streakResult
+        tables: tablesCheck,
+        structure: structureResult,
+        streak: streakResult
       }
     };
-  } catch (error) {
-    console.error("Error fixing all issues:", error);
+  } catch (error: any) {
+    console.error('Error in fixAllIssues:', error);
+    
+    // Handle error without using count property
+    toast({
+      title: 'Error',
+      description: 'Failed to fix database issues. Please try again.',
+      variant: 'destructive',
+    });
+    
     return {
       success: false,
-      message: `Error fixing all issues: ${error}`,
-      details: { error }
+      message: 'Failed to fix database issues',
+      details: { error: error.message }
     };
   }
 };
-
-// Make the function available in the browser console
-(window as any).fixAllIssues = fixAllIssues;
-
-export default fixAllIssues;

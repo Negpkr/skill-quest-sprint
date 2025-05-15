@@ -50,7 +50,15 @@ const ChallengeGrid: React.FC<ChallengeGridProps> = ({
     >
       {challenges.map((challenge) => (
         <motion.div key={challenge.id} variants={itemVariants}>
-          <ChallengeCard challenge={challenge} />
+          <ChallengeCard 
+            id={challenge.id}
+            title={challenge.title}
+            description={challenge.description}
+            category={challenge.category}
+            difficulty={challenge.difficulty}
+            duration={challenge.duration}
+            resources={challenge.resources}
+          />
         </motion.div>
       ))}
     </motion.div>

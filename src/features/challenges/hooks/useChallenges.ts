@@ -1,122 +1,91 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { mockChallengeData } from "@/data/mockSprintData";
 import { ChallengeProps } from "@/features/challenges/components/ChallengeCard";
-import { toast } from "@/components/ui/use-toast";
 
 export const useChallenges = () => {
-  const [challenges, setChallenges] = useState<ChallengeProps[]>([]);
-  const [filteredChallenges, setFilteredChallenges] = useState<ChallengeProps[]>([]);
+  const [allChallenges, setAllChallenges] = useState<ChallengeProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<string[]>([]);
   const [difficulties, setDifficulties] = useState<string[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  
   useEffect(() => {
     fetchChallenges();
   }, []);
-
-  useEffect(() => {
-    filterChallenges();
-  }, [challenges, selectedCategory, selectedDifficulty, searchQuery]);
-
+  
   const fetchChallenges = async () => {
-    setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("sprints")
-        .select("*");
-
+      setIsLoading(true);
+      
+      const { data: sprintsData, error } = await supabase
+        .from('sprints')
+        .select('*');
+      
       if (error) {
-        console.error("Error fetching challenges:", error);
-        // Fall back to mock data
-        useMockData();
-        return;
+        throw error;
       }
-
-      if (data && data.length > 0) {
-        setChallenges(data);
+      
+      if (sprintsData) {
+        // Make sure sprintsData is properly typed as ChallengeProps[]
+        const typedSprintsData: ChallengeProps[] = sprintsData.map(sprint => ({
+          id: sprint.id,
+          title: sprint.title,
+          description: sprint.description,
+          category: sprint.category,
+          difficulty: sprint.difficulty,
+          duration: sprint.duration,
+          resources: sprint.resources
+        }));
+        
+        setAllChallenges(typedSprintsData);
         
         // Extract unique categories and difficulties
-        const uniqueCategories = Array.from(new Set(data.map(item => item.category)));
-        const uniqueDifficulties = Array.from(new Set(data.map(item => item.difficulty)));
+        const uniqueCategories: string[] = [...new Set(typedSprintsData.map(sprint => sprint.category))];
+        const uniqueDifficulties: string[] = [...new Set(typedSprintsData.map(sprint => sprint.difficulty))];
         
         setCategories(uniqueCategories);
         setDifficulties(uniqueDifficulties);
-      } else {
-        // Fall back to mock data if no data from Supabase
-        useMockData();
       }
     } catch (error) {
-      console.error("Error in fetchChallenges:", error);
-      // Fall back to mock data
-      useMockData();
+      console.error('Error fetching challenges:', error);
     } finally {
       setIsLoading(false);
     }
   };
-
-  const useMockData = () => {
-    setChallenges(mockChallengeData);
-    
-    // Extract unique categories and difficulties from mock data
-    const uniqueCategories = Array.from(new Set(mockChallengeData.map(item => item.category)));
-    const uniqueDifficulties = Array.from(new Set(mockChallengeData.map(item => item.difficulty)));
-    
-    setCategories(uniqueCategories);
-    setDifficulties(uniqueDifficulties);
-    
-    toast({
-      title: "Using demo data",
-      description: "We're showing you demo challenges because we couldn't connect to the database.",
-      variant: "default",
-    });
-  };
-
-  const filterChallenges = () => {
-    let filtered = [...challenges];
-    
-    if (selectedCategory) {
-      filtered = filtered.filter(challenge => challenge.category === selectedCategory);
-    }
-    
-    if (selectedDifficulty) {
-      filtered = filtered.filter(challenge => challenge.difficulty === selectedDifficulty);
-    }
-    
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(challenge => 
-        challenge.title.toLowerCase().includes(query) || 
-        challenge.description.toLowerCase().includes(query)
-      );
-    }
-    
-    setFilteredChallenges(filtered);
-  };
-
+  
   const resetFilters = () => {
-    setSelectedCategory(null);
-    setSelectedDifficulty(null);
-    setSearchQuery("");
+    setSelectedCategory('');
+    setSelectedDifficulty('');
+    setSearchTerm('');
   };
-
+  
+  // Filter challenges based on selected filters and search term
+  const filteredChallenges = allChallenges.filter(challenge => {
+    const matchesCategory = selectedCategory ? challenge.category === selectedCategory : true;
+    const matchesDifficulty = selectedDifficulty ? challenge.difficulty === selectedDifficulty : true;
+    const matchesSearch = searchTerm
+      ? challenge.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        challenge.description.toLowerCase().includes(searchTerm.toLowerCase())
+      : true;
+    
+    return matchesCategory && matchesDifficulty && matchesSearch;
+  });
+  
   return {
-    challenges: filteredChallenges,
-    allChallenges: challenges,
+    allChallenges,
+    filteredChallenges,
     isLoading,
     categories,
     difficulties,
     selectedCategory,
     selectedDifficulty,
-    searchQuery,
+    searchTerm,
     setSelectedCategory,
     setSelectedDifficulty,
-    setSearchQuery,
-    resetFilters,
-    filteredChallenges
+    setSearchTerm,
+    resetFilters
   };
 };

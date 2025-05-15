@@ -9,17 +9,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const Challenges: React.FC = () => {
   const {
-    challenges: filteredChallenges,
+    filteredChallenges,
     allChallenges,
     isLoading,
     categories,
     difficulties,
     selectedCategory,
     selectedDifficulty,
-    searchQuery,
+    searchTerm,
     setSelectedCategory,
     setSelectedDifficulty,
-    setSearchQuery,
+    setSearchTerm,
     resetFilters
   } = useChallenges();
 
@@ -29,14 +29,12 @@ const Challenges: React.FC = () => {
       
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <ChallengeFilters 
-          categories={categories}
-          difficulties={difficulties}
           selectedCategory={selectedCategory}
           selectedDifficulty={selectedDifficulty}
-          searchQuery={searchQuery}
+          searchTerm={searchTerm}
           setSelectedCategory={setSelectedCategory}
           setSelectedDifficulty={setSelectedDifficulty}
-          setSearchQuery={setSearchQuery}
+          setSearchTerm={setSearchTerm}
           resetFilters={resetFilters}
         />
         

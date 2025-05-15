@@ -1,22 +1,53 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Menu } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import NavbarBrand from "@/components/navbar/NavbarBrand";
 import NavbarDesktop from "@/components/navbar/NavbarDesktop";
 import NavbarMobile from "@/components/navbar/NavbarMobile";
 
-const Navbar: React.FC = () => {
-  const { user, isLoading } = useAuth();
+interface NavbarProps {}
 
+const Navbar: React.FC<NavbarProps> = () => {
+  const { user, loading } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  
+  const handleSignOut = async () => {
+    const { signOut } = useAuth();
+    await signOut();
+    navigate('/');
+  };
+  
   return (
-    <header className="w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b">
-      <div className="container flex h-16 items-center justify-between">
-        <NavbarBrand />
-        <NavbarDesktop user={user} isLoading={isLoading} />
-        <NavbarMobile user={user} isLoading={isLoading} />
+    <nav className="bg-background sticky top-0 z-50 border-b">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <NavbarBrand />
+          
+          {/* Desktop Navigation */}
+          <NavbarDesktop />
+          
+          {/* Mobile Navigation Toggle */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:bg-secondary focus:outline-none"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
       </div>
-    </header>
+      
+      {/* Mobile Navigation Menu */}
+      <NavbarMobile 
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        handleSignOut={handleSignOut}
+      />
+    </nav>
   );
 };
 
