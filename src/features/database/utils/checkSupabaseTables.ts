@@ -1,59 +1,76 @@
 
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/use-toast';
+import { supabase } from "@/integrations/supabase/client";
+import { PostgrestError } from '@supabase/supabase-js';
 
-/**
- * Checks if all required tables exist in the Supabase database
- * Returns true if all tables exist, false otherwise
- */
-export async function checkSupabaseTables(): Promise<boolean> {
-  const requiredTables = [
-    'sprints',
-    'challenges',
-    'user_progress',
-    'streaks',
-  ] as const; // Using const assertion to create a readonly tuple type
-  
-  try {
-    // We can't directly query pg_catalog.pg_tables, so we'll check each table individually
-    let allTablesExist = true;
-    
-    for (const tableName of requiredTables) {
-      try {
-        // Try to query a single row from each table to check if it exists
-        const { count, error } = await supabase
-          .from(tableName)
-          .select('*', { count: 'exact', head: true });
-
-        if (error) {
-          console.error(`Error checking table ${tableName}:`, error);
-          allTablesExist = false;
-        }
-      } catch (err) {
-        console.error(`Error checking table ${tableName}:`, err);
-        allTablesExist = false;
-      }
-    }
-    
-    if (!allTablesExist) {
-      toast({
-        title: "Database structure issue detected",
-        description: "Some required tables are missing. Please visit the Database Setup page.",
-        variant: "destructive",
-      });
-      return false;
-    }
-    
-    return true;
-  } catch (error) {
-    console.error("Error checking database tables:", error);
-    
-    toast({
-      title: "Database error",
-      description: "Could not check database structure. Please reload the page.",
-      variant: "destructive",
-    });
-    
-    return false;
-  }
+interface TablesResponse {
+  success: boolean;
+  error?: PostgrestError | null;
+  data?: any[];
+  message?: string;
 }
+
+// List of known tables in our database
+const KNOWN_TABLES = [
+  "challenges", "sprints", "comments", "community_posts", 
+  "contact_messages", "problem_reports", "streaks", 
+  "templates", "user_progress", "Users"
+] as const;
+
+// Type for known tables
+type KnownTable = typeof KNOWN_TABLES[number];
+
+// Function that checks if a string is a KnownTable
+function isKnownTable(tableName: string): tableName is KnownTable {
+  return KNOWN_TABLES.includes(tableName as KnownTable);
+}
+
+export const checkTable = async (tableName: string): Promise<TablesResponse> => {
+  try {
+    // Validate table name before query
+    if (!isKnownTable(tableName)) {
+      return {
+        success: false,
+        message: `Invalid table name: ${tableName}. Must be one of ${KNOWN_TABLES.join(', ')}`
+      };
+    }
+    
+    const { data, error } = await supabase
+      .from(tableName)
+      .select('*')
+      .limit(1);
+      
+    if (error) {
+      return {
+        success: false,
+        error,
+        message: `Error checking ${tableName} table: ${error.message}`
+      };
+    }
+    
+    return {
+      success: true,
+      data,
+      message: `Table ${tableName} exists and is accessible`
+    };
+    
+  } catch (err) {
+    const error = err as Error;
+    return {
+      success: false,
+      message: `Unexpected error checking ${tableName} table: ${error.message}`
+    };
+  }
+};
+
+// Helper function to check multiple tables
+export const checkTables = async (tableNames: string[]): Promise<Record<string, TablesResponse>> => {
+  const results: Record<string, TablesResponse> = {};
+  
+  for (const tableName of tableNames) {
+    results[tableName] = await checkTable(tableName);
+  }
+  
+  return results;
+};
+
+export default checkTables;
