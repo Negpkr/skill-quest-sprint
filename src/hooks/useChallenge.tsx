@@ -7,6 +7,7 @@ import { useChallengeProgress } from "./useChallengeProgress";
 import { useChallengeCompletion } from "./useChallengeCompletion";
 import { useStreakData } from "./useStreakData";
 import { UseChallengeReturn } from "@/types/sprint";
+import { useState, useCallback } from 'react';
 
 export const useChallenge = (id: string | undefined): UseChallengeReturn => {
   const { user } = useAuth();
@@ -15,12 +16,20 @@ export const useChallenge = (id: string | undefined): UseChallengeReturn => {
   const { refreshStreak } = useStreakData(user?.id);
 
   // Use the new hooks
-  const { sprint, challenges, isLoading, notFound } = useChallengeFetch(id);
+  const { 
+    sprint, 
+    challenges, 
+    isLoading, 
+    notFound,
+    refreshData: refreshChallengeData 
+  } = useChallengeFetch(id);
+  
   const { currentDay, taskCompleted, setTaskCompleted } = useChallengeProgress(
     id,
     user,
     sprint?.duration
   );
+  
   const { handleMarkComplete, handleToggleComplete } = useChallengeCompletion(
     id,
     user,
@@ -34,6 +43,13 @@ export const useChallenge = (id: string | undefined): UseChallengeReturn => {
     return challenges.find(challenge => challenge.day === currentDay);
   };
 
+  // Function to refresh challenges data
+  const refreshChallenges = useCallback(async () => {
+    if (refreshChallengeData) {
+      await refreshChallengeData();
+    }
+  }, [refreshChallengeData]);
+
   return {
     sprint,
     challenges,
@@ -44,6 +60,7 @@ export const useChallenge = (id: string | undefined): UseChallengeReturn => {
     handleMarkComplete,
     handleToggleComplete,
     getCurrentChallenge,
-    parseResources
+    parseResources,
+    refreshChallenges
   };
 };

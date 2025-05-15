@@ -27,4 +27,5 @@ export interface UseChallengeReturn {
   handleToggleComplete: () => Promise<void>;
   getCurrentChallenge: () => Challenge | undefined;
   parseResources: (resourcesStr: string | null) => any[];
+  refreshChallenges?: () => Promise<void>;
 }

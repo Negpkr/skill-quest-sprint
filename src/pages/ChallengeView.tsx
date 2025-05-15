@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../components/Layout";
 import { useParams, Navigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
@@ -11,10 +11,15 @@ import StreakDisplay from "@/components/challenge/StreakDisplay";
 import { useChallenge } from "@/hooks/useChallenge";
 import { useStreakData } from "@/hooks/useStreakData";
 import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { extendChallenge } from "@/utils/challengeUtils";
 
 const ChallengeView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const [isExtending, setIsExtending] = useState(false);
+  
   const {
     sprint,
     challenges,
@@ -25,7 +30,8 @@ const ChallengeView: React.FC = () => {
     handleMarkComplete,
     handleToggleComplete,
     getCurrentChallenge,
-    parseResources
+    parseResources,
+    refreshChallenges
   } = useChallenge(id);
 
   const { streakDays, isLoading: isStreakLoading, refreshStreak } = useStreakData(user?.id);
@@ -42,6 +48,45 @@ const ChallengeView: React.FC = () => {
 
   const currentChallenge = getCurrentChallenge();
   const progressPercent = sprint?.duration ? (currentDay / sprint.duration) * 100 : 0;
+
+  const handleExtendChallenge = async () => {
+    if (!id || !sprint || !user) return;
+    
+    try {
+      setIsExtending(true);
+      
+      const result = await extendChallenge(id, sprint.duration || challenges.length, 30);
+      
+      if (result.success) {
+        toast({
+          title: "Challenge Extended",
+          description: "30 more days have been added to this challenge!",
+        });
+        
+        // Refresh the challenges data
+        if (refreshChallenges) {
+          await refreshChallenges();
+        } else {
+          window.location.reload(); // Fallback if refreshChallenges is not available
+        }
+      } else {
+        toast({
+          title: "Failed to Extend Challenge",
+          description: "There was an error extending the challenge. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error extending challenge:", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExtending(false);
+    }
+  };
 
   return (
     <Layout>
@@ -65,6 +110,19 @@ const ChallengeView: React.FC = () => {
                 handleMarkComplete={handleMarkComplete}
                 handleToggleComplete={handleToggleComplete}
               />
+              
+              {user && sprint && progressPercent > 80 && (
+                <div className="mt-6">
+                  <Button 
+                    onClick={handleExtendChallenge} 
+                    disabled={isExtending}
+                    className="bg-skillpurple-500 hover:bg-skillpurple-600"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Extend Challenge (Add 30 More Days)
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="space-y-6">
