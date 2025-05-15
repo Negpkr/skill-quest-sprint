@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
-// Import the components from the correct paths
+// Import the refactored components
 import NavbarBrand from "./navbar/NavbarBrand";
-import NavbarDesktop from "./NavbarDesktop";
+import NavbarDesktop from "./navbar/NavbarDesktop";
 import NavbarMobile from "./navbar/NavbarMobile";
 
 const Navbar: React.FC = () => {

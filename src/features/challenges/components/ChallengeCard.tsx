@@ -1,10 +1,10 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import React from "react";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import ScrollAnimationWrapper from '@/components/ScrollAnimationWrapper';
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export interface ChallengeProps {
   id: string;
@@ -13,74 +13,84 @@ export interface ChallengeProps {
   category: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   imageUrl: string;
-  resources?: Array<{ title: string; url: string }>;
+  resources: {
+    title: string;
+    url: string;
+  }[];
 }
 
-interface ChallengeCardProps {
-  challenge: ChallengeProps;
-  index?: number;
-}
+const ChallengeCard: React.FC<{ challenge: ChallengeProps }> = ({ challenge }) => {
+  const difficultyClass = 
+    challenge.difficulty === "Beginner" 
+      ? "bg-softgreen text-green-800" 
+      : challenge.difficulty === "Intermediate" 
+        ? "bg-softyellow text-yellow-800"
+        : "bg-softorange text-orange-800";
 
-const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge, index = 0 }) => {
-  const { id, title, description, category, difficulty, imageUrl } = challenge;
-  
-  // Generate badge color based on difficulty
-  const getBadgeColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "Beginner":
-        return "bg-green-100 text-green-800 hover:bg-green-200";
-      case "Intermediate":
-        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200";
-      case "Advanced":
-        return "bg-red-100 text-red-800 hover:bg-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-200";
-    }
+  const categoryColors: Record<string, string> = {
+    Design: "bg-softpurple text-purple-800",
+    Tech: "bg-softblue text-blue-800",
+    Marketing: "bg-softpink text-pink-800",
+    Creator: "bg-softorange text-orange-800",
+    Business: "bg-softpeach text-orange-800",
+    Freelance: "bg-softgreen text-green-800",
+    Productivity: "bg-softblue text-blue-800",
+    Custom: "bg-gray-200 text-gray-800"
   };
 
   return (
-    <ScrollAnimationWrapper 
-      animation="slideUp" 
-      delay={index * 0.1}
-    >
-      <Link to={`/challenge/${id}`}>
-        <Card className="h-full overflow-hidden transform transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
-          <div className="relative">
-            <AspectRatio ratio={16 / 9}>
-              <img 
-                src={imageUrl} 
-                alt={title} 
-                className="object-cover w-full h-full rounded-t-lg"
-              />
-            </AspectRatio>
-            <div className="absolute top-4 right-4">
-              <Badge className={`${getBadgeColor(difficulty)}`}>
-                {difficulty}
-              </Badge>
-            </div>
-            <div className="absolute top-4 left-4">
-              <Badge variant="outline" className="bg-white/80 backdrop-blur-sm">
-                {category}
-              </Badge>
-            </div>
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-dark-card border-dark-border dark-glow">
+      <div className="relative h-48 bg-muted">
+        <img
+          src={challenge.imageUrl}
+          alt={challenge.title}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+        <div className="absolute top-2 right-2">
+          <Badge className={difficultyClass}>
+            {challenge.difficulty}
+          </Badge>
+        </div>
+        <div className="absolute bottom-2 left-2">
+          <Badge className={categoryColors[challenge.category] || "bg-secondary"}>
+            {challenge.category}
+          </Badge>
+        </div>
+      </div>
+      <CardHeader className="pb-2 pt-4">
+        <h3 className="font-bold text-lg text-white">{challenge.title}</h3>
+      </CardHeader>
+      <CardContent className="pb-0">
+        <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
+          {challenge.description}
+        </p>
+        {challenge.resources.length > 0 && (
+          <div className="text-sm">
+            <p className="font-medium mb-1 text-muted-foreground">Resources:</p>
+            <ul className="list-disc pl-5 space-y-1">
+              {challenge.resources.map((resource, index) => (
+                <li key={index}>
+                  <a
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-skillpurple-400 hover:text-skillpurple-300 hover:underline"
+                  >
+                    {resource.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
-          
-          <CardContent className="pt-4">
-            <h3 className="font-semibold text-lg mb-2 line-clamp-1">{title}</h3>
-            <p className="text-muted-foreground text-sm line-clamp-2">{description}</p>
-          </CardContent>
-          
-          <CardFooter className="border-t px-6 py-4">
-            <span className="text-xs font-medium text-skillpurple-500 flex items-center">
-              View Challenge
-              <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </span>
-          </CardFooter>
-        </Card>
-      </Link>
-    </ScrollAnimationWrapper>
+        )}
+      </CardContent>
+      <CardFooter className="pt-4 mt-4">
+        <Button asChild className="w-full bg-skillpurple-400 hover:bg-skillpurple-500">
+          <Link to={`/sprint-detail/${challenge.id}`}>View Sprint</Link>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
