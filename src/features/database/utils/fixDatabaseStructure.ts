@@ -32,9 +32,9 @@ export async function fixDatabaseStructure(): Promise<boolean> {
     }
     
     const { data: userProgressColumns, error: columnCheckError } = await supabase
-      .rpc<Record<string, any>>('get_columns_for_table', { 
+      .rpc<Record<string, any>, GetColumnsParams>('get_columns_for_table', { 
         table_name: 'user_progress' 
-      } as GetColumnsParams);
+      });
     
     if (columnCheckError || !userProgressColumns) {
       console.error("Error checking user_progress columns:", columnCheckError);
