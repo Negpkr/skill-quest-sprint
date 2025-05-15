@@ -11,10 +11,8 @@ import {
 } from "@/components/ui/toast"
 import { useToast as useToastOriginal } from "@/components/ui/use-toast"
 
-export const ToasterContext = React.createContext({ toast: null })
-
 export function Toaster() {
-  const { toast: originalToast, toasts } = useToastOriginal()
+  const { toasts } = useToastOriginal()
 
   return (
     <ToastProvider>

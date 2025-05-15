@@ -26,8 +26,9 @@ export async function fixDatabaseStructure(): Promise<boolean> {
     }
     
     // Check if user_progress table has current_day column
+    // Fixed: Using the correct type for the table_name parameter
     const { data: userProgressColumns, error: columnCheckError } = await supabase
-      .rpc('get_columns_for_table', { table_name: 'user_progress' });
+      .rpc('get_columns_for_table', { table_name: 'user_progress' } as { table_name: string });
     
     if (columnCheckError || !userProgressColumns) {
       console.error("Error checking user_progress columns:", columnCheckError);
