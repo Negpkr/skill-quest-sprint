@@ -15,27 +15,24 @@ export const checkAllTablesExist = async (): Promise<Record<string, boolean>> =>
   ];
   
   try {
-    // Get list of all tables
-    const { data, error } = await supabase
-      .from('pg_catalog.pg_tables')
-      .select('tablename')
-      .eq('schemaname', 'public');
-      
-    if (error) {
-      console.error("Error fetching tables:", error);
-      throw error;
+    // We can't directly query pg_catalog.pg_tables, so we'll check each table individually
+    const result: Record<string, boolean> = {};
+    
+    for (const tableName of requiredTables) {
+      try {
+        // Try to query a single row from each table to check if it exists
+        const { count, error } = await supabase
+          .from(tableName)
+          .select('*', { count: 'exact', head: true });
+        
+        // If there's no error, the table exists
+        result[tableName] = !error;
+      } catch {
+        result[tableName] = false;
+      }
     }
     
-    // Create a set of existing table names for easier lookup
-    const existingTables = new Set(data?.map(table => table.tablename) || []);
-    console.log("Existing tables:", existingTables);
-    
-    // Build result object
-    const result: Record<string, boolean> = {};
-    requiredTables.forEach(table => {
-      result[table] = existingTables.has(table);
-    });
-    
+    console.log("Table existence check result:", result);
     return result;
     
   } catch (error) {
@@ -49,4 +46,4 @@ export const checkAllTablesExist = async (): Promise<Record<string, boolean>> =>
   }
 };
 
-export default { checkAllTablesExist };
+export default checkAllTablesExist;

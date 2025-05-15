@@ -10,31 +10,35 @@ export const fixStreakIssues = async (): Promise<{success: boolean, message?: st
   try {
     console.log("Starting streak issues fix");
     
-    // Get all users
-    const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
+    // Instead of getting all users via auth.admin (which requires admin access),
+    // we'll get unique user IDs from user_progress table
+    const { data: userProgressData, error: userProgressError } = await supabase
+      .from('user_progress')
+      .select('user_id')
+      .order('user_id');
     
-    if (usersError) {
-      console.error("Error fetching users:", usersError);
+    if (userProgressError) {
+      console.error("Error fetching user progress:", userProgressError);
       return { 
         success: false, 
-        error: usersError 
+        error: userProgressError 
       };
     }
     
-    if (!users || users.length === 0) {
-      console.log("No users found, nothing to fix");
+    if (!userProgressData || userProgressData.length === 0) {
+      console.log("No user progress found, nothing to fix");
       return { 
         success: true, 
-        message: "No users found, nothing to fix" 
+        message: "No user progress found, nothing to fix" 
       };
     }
     
-    console.log(`Found ${users.length} users to check for streak issues`);
+    // Get unique user IDs
+    const userIds = [...new Set(userProgressData.map(record => record.user_id))];
+    console.log(`Found ${userIds.length} users to check for streak issues`);
     
     // For each user, check if they have streak data
-    for (const user of users) {
-      const userId = user.id;
-      
+    for (const userId of userIds) {
       // Check if streak record exists
       const { data: streakData, error: streakError } = await supabase
         .from('streaks')
@@ -72,7 +76,7 @@ export const fixStreakIssues = async (): Promise<{success: boolean, message?: st
     
     return {
       success: true,
-      message: `Checked and fixed streak records for ${users.length} users`
+      message: `Checked and fixed streak records for ${userIds.length} users`
     };
     
   } catch (error) {

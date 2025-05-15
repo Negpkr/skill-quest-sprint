@@ -17,37 +17,30 @@ export const fixAllDatabaseStructure = async (): Promise<FixDatabaseStructureRes
     console.log("Checking for missing columns in user_progress table...");
     
     // Check if 'completed' column exists in user_progress table
-    const { data: columns, error: columnsError } = await supabase
-      .from('user_progress')
-      .select('completed')
-      .limit(1);
-      
+    let columnsError = null;
+    try {
+      const { data, error } = await supabase
+        .from('user_progress')
+        .select('completed')
+        .limit(1);
+        
+      columnsError = error;
+    } catch (error) {
+      columnsError = error;
+    }
+    
     if (columnsError) {
       // If the error mentions the column doesn't exist, we need to add it
-      if (columnsError.message.includes("column") && columnsError.message.includes("does not exist")) {
+      const errorMessage = columnsError.message || '';
+      if (errorMessage.includes("column") && errorMessage.includes("does not exist")) {
         console.log("Adding 'completed' column to user_progress table...");
         
-        // Add the column using raw SQL
-        const { error: alterError } = await supabase.rpc(
-          'exec',
-          { 
-            query: 'ALTER TABLE user_progress ADD COLUMN IF NOT EXISTS completed BOOLEAN DEFAULT false;' 
-          }
-        );
-        
-        if (alterError) {
-          console.error("Error adding column:", alterError);
-          return {
-            success: false,
-            message: `Failed to add 'completed' column: ${alterError.message}`,
-            details: alterError
-          };
-        }
-        
-        console.log("Successfully added 'completed' column to user_progress table");
+        // We can't use supabase.rpc directly with exec for security reasons
+        // Instead, display guidance to the user
         return {
-          success: true,
-          message: "Added missing 'completed' column to user_progress table"
+          success: false,
+          message: "Missing 'completed' column in user_progress table. Please run the SQL in supabase/migrations/fix_database_structure.sql to add it.",
+          details: columnsError
         };
       } else {
         console.error("Error checking columns:", columnsError);
