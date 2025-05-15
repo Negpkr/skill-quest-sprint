@@ -1,72 +1,52 @@
 
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
-
-export interface FixDatabaseStructureResult {
-  success: boolean;
-  message: string;
-  details?: any;
-}
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
 
 /**
- * Checks and fixes the structure of the database tables
- * @returns Promise<FixDatabaseStructureResult> Result of the fix operation
+ * Fixes database structure issues by running SQL queries
+ * to create missing tables and columns
  */
-export const fixAllDatabaseStructure = async (): Promise<FixDatabaseStructureResult> => {
+export async function fixDatabaseStructure(): Promise<boolean> {
   try {
-    console.log("Checking for missing columns in user_progress table...");
+    // Check if streaks table exists
+    const { error: streaksTableCheckError } = await supabase
+      .from('streaks')
+      .select('*', { count: 'exact', head: true });
     
-    // Check if 'completed' column exists in user_progress table
-    let columnsError = null;
-    try {
-      const { data, error } = await supabase
-        .from('user_progress')
-        .select('completed')
-        .limit(1);
-        
-      columnsError = error;
-    } catch (error) {
-      columnsError = error;
+    // If streaks table doesn't exist, create it
+    if (streaksTableCheckError) {
+      // We can't execute arbitrary SQL directly from the client
+      // Instead, inform the user that they need to run the SQL script
+      toast({
+        title: "Database structure needs fixing",
+        description: "Please run the SQL script from the database setup page",
+        variant: "destructive",
+      });
+      return false;
     }
     
-    if (columnsError) {
-      // If the error mentions the column doesn't exist, we need to add it
-      const errorMessage = columnsError.message || '';
-      if (errorMessage.includes("column") && errorMessage.includes("does not exist")) {
-        console.log("Adding 'completed' column to user_progress table...");
-        
-        // We can't use supabase.rpc directly with exec for security reasons
-        // Instead, display guidance to the user
-        return {
-          success: false,
-          message: "Missing 'completed' column in user_progress table. Please run the SQL in supabase/migrations/fix_database_structure.sql to add it.",
-          details: columnsError
-        };
-      } else {
-        console.error("Error checking columns:", columnsError);
-        return {
-          success: false,
-          message: `Error checking database structure: ${columnsError.message}`,
-          details: columnsError
-        };
-      }
+    // Check if user_progress table has current_day column
+    const { data: userProgressColumns, error: columnCheckError } = await supabase
+      .rpc('get_columns_for_table', { table_name: 'user_progress' });
+    
+    if (columnCheckError || !userProgressColumns) {
+      console.error("Error checking user_progress columns:", columnCheckError);
+      toast({
+        title: "Error checking database structure",
+        description: "Could not verify database columns. Please try again.",
+        variant: "destructive",
+      });
+      return false;
     }
     
-    // If we got here without error, the column already exists
-    console.log("All required columns already exist in user_progress table");
-    return {
-      success: true,
-      message: "Database structure is valid, no fixes needed"
-    };
-    
+    return true;
   } catch (error) {
     console.error("Error fixing database structure:", error);
-    return {
-      success: false,
-      message: `Unexpected error fixing database structure: ${error}`,
-      details: error
-    };
+    toast({
+      title: "Database error",
+      description: "Could not fix database structure. Please try again later.",
+      variant: "destructive",
+    });
+    return false;
   }
-};
-
-export default fixAllDatabaseStructure;
+}

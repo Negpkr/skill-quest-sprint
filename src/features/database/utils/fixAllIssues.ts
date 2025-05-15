@@ -1,123 +1,63 @@
 
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
-import fixAllDatabaseStructure from "./fixDatabaseStructure";
-import checkAllTablesExist from "./checkSupabaseTables";
-import fixStreakIssues from "./fixStreakIssues";
+import { checkSupabaseTables } from './checkSupabaseTables';
+import { fixDatabaseStructure } from './fixDatabaseStructure';
+import { fixStreakIssues } from './fixStreakIssues';
+import { toast } from '@/components/ui/use-toast';
 
 /**
- * Fix all issues in the application
- * @returns Promise<{success: boolean, message: string, details: any}> - Result of the fix operation
+ * Attempts to fix all known database issues
  */
-export const fixAllIssues = async (): Promise<{success: boolean, message: string, details: any}> => {
+export async function fixAllIssues(): Promise<boolean> {
   try {
-    // Step 1: Check if all required tables exist
-    console.log("Step 1: Checking if all required tables exist...");
-    const tableStatus = await checkAllTablesExist();
-
-    const missingTables = Object.entries(tableStatus)
-      .filter(([_, exists]) => !exists)
-      .map(([name]) => name);
-
-    if (missingTables.length > 0) {
-      return {
-        success: false,
-        message: `Missing tables: ${missingTables.join(', ')}. Please run the SQL in supabase/migrations/create_tables.sql to create them.`,
-        details: { tableStatus }
-      };
+    // First check if required tables exist
+    const tablesExist = await checkSupabaseTables();
+    
+    if (!tablesExist) {
+      toast({
+        title: "Missing tables",
+        description: "Can't proceed with fixes. Please create required tables first.",
+        variant: "destructive",
+      });
+      return false;
     }
-
-    // Step 2: Fix database structure issues
-    console.log("Step 2: Fixing database structure issues...");
-    const structureResult = await fixAllDatabaseStructure();
-
-    if (!structureResult.success) {
-      return {
-        success: false,
-        message: `Database structure issues: ${structureResult.message}`,
-        details: { structureResult }
-      };
+    
+    // Fix database structure (create missing columns, etc.)
+    const structureFixed = await fixDatabaseStructure();
+    
+    if (!structureFixed) {
+      toast({
+        title: "Structure fix failed",
+        description: "Could not fix database structure. See console for details.",
+        variant: "destructive",
+      });
+      return false;
     }
-
-    // Step 3: Check if there are any sprints
-    console.log("Step 3: Checking if there are any sprints...");
-    const { data: sprints, error: sprintsError } = await supabase
-      .from('sprints')
-      .select('*', { head: true });
-
-    if (sprintsError) {
-      return {
-        success: false,
-        message: `Error checking sprints: ${sprintsError.message}`,
-        details: { sprintsError }
-      };
+    
+    // Fix streak-related issues
+    const streaksFixed = await fixStreakIssues();
+    
+    if (!streaksFixed) {
+      toast({
+        title: "Streak fix failed",
+        description: "Could not fix streak issues. See console for details.",
+        variant: "destructive",
+      });
+      return false;
     }
-
-    if (!sprints) {
-      return {
-        success: false,
-        message: "No sprints found. Please run the SQL in supabase/migrations/create_tables.sql to create sample data.",
-        details: { sprints }
-      };
-    }
-
-    // Step 4: Check if there are any challenges
-    console.log("Step 4: Checking if there are any challenges...");
-    const { data: challenges, error: challengesError } = await supabase
-      .from('challenges')
-      .select('*', { head: true });
-
-    if (challengesError) {
-      return {
-        success: false,
-        message: `Error checking challenges: ${challengesError.message}`,
-        details: { challengesError }
-      };
-    }
-
-    if (!challenges) {
-      return {
-        success: false,
-        message: "No challenges found. Please run the SQL in supabase/migrations/create_tables.sql to create sample data.",
-        details: { challenges }
-      };
-    }
-
-    // Step 5: Fix streak issues
-    console.log("Step 5: Fixing streak issues...");
-    const streakResult = await fixStreakIssues();
-
-    if (!streakResult.success) {
-      return {
-        success: false,
-        message: `Error fixing streak issues: ${streakResult.error}`,
-        details: { streakResult }
-      };
-    }
-
-    // All checks passed
-    return {
-      success: true,
-      message: "All issues fixed successfully",
-      details: {
-        tableStatus,
-        structureResult,
-        sprints,
-        challenges,
-        streakResult
-      }
-    };
+    
+    toast({
+      title: "Fixes applied successfully",
+      description: "All database issues have been fixed.",
+    });
+    
+    return true;
   } catch (error) {
-    console.error("Error fixing all issues:", error);
-    return {
-      success: false,
-      message: `Error fixing all issues: ${error}`,
-      details: { error }
-    };
+    console.error("Error applying fixes:", error);
+    toast({
+      title: "Error fixing issues",
+      description: "An unexpected error occurred. Please try again later.",
+      variant: "destructive",
+    });
+    return false;
   }
-};
-
-// Make the function available in the browser console
-(window as any).fixAllIssues = fixAllIssues;
-
-export default fixAllIssues;
+}
