@@ -1,71 +1,40 @@
 
-import { supabase } from "@/integrations/supabase/client";
-
-/**
- * Find a sprint ID by its slug
- * @param slug - The sprint slug to search for
- * @returns The sprint ID if found, or undefined
- */
-export const findSprintIdBySlug = async (slug: string): Promise<string | undefined> => {
-  try {
-    if (!slug) return undefined;
-    
-    // Clean up the slug to handle potential URL issues
-    const cleanSlug = slug.trim().toLowerCase();
-    
-    const { data, error } = await supabase
-      .from('sprints')
-      .select('id')
-      .eq('slug', cleanSlug)
-      .maybeSingle();
-    
-    if (error) {
-      console.error("Error finding sprint by slug:", error);
-      return undefined;
-    }
-    
-    return data?.id;
-  } catch (error) {
-    console.error("Exception finding sprint by slug:", error);
-    return undefined;
-  }
+// Define a mapping for string IDs to UUIDs for compatibility with mock data
+export const idToUuidMap: Record<string, string> = {
+  'design-starter': 'd0d766ab-5ca8-45c1-b789-500d132c8710',
+  'web-dev': '08c8f5db-c37e-417d-a6a4-d10c0bb78e52',
+  'freelance-launchpad': '7ead586e-49a1-4ba0-bbeb-97f6cc482170',
+  'personal-brand': '7a8d9d12-441d-4fe8-a9ab-3a40ea4fb2d3',
+  'productivity': '07d5fc8e-a14c-42ee-b7e9-19fb27eb4b56',
+  'freelance-pro': 'd43fed60-f098-42f9-8afc-ba2c19d61b70'
 };
 
-/**
- * Parse resources string into an array of resource objects
- * @param resourcesStr - The resources string to parse
- * @returns An array of resource objects with title and url properties
- */
-export const parseResources = (resourcesStr: string | null): { title: string, url: string }[] => {
+// Helper function to find the UUID from the challenge ID mapping
+export const findSprintIdBySlug = (slug: string): string | null => {
+  // Check if the slug is directly in our mapping
+  if (idToUuidMap[slug]) {
+    return idToUuidMap[slug];
+  }
+
+  // Check if the slug is already a UUID
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (uuidRegex.test(slug)) {
+    console.log("ID is already a valid UUID:", slug);
+    return slug;
+  }
+
+  console.log("ID is not a valid UUID and not in mapping:", slug);
+  return slug; // If not found, return the original slug
+};
+
+// Parse resources string to JSON
+export const parseResources = (resourcesStr: string | null) => {
   if (!resourcesStr) return [];
-  
+
   try {
-    // First try parsing as JSON
-    try {
-      const jsonData = JSON.parse(resourcesStr);
-      if (Array.isArray(jsonData)) {
-        return jsonData.map(item => ({
-          title: item.title || 'Resource',
-          url: item.url || '#'
-        }));
-      }
-    } catch (e) {
-      // Not valid JSON, continue with other parsing methods
-    }
-    
-    // Try parsing as a simple line-by-line format
-    // Format: "Title | URL" on each line
-    return resourcesStr.split('\n')
-      .filter(line => line.trim() && line.includes('|'))
-      .map(line => {
-        const [title, url] = line.split('|').map(s => s.trim());
-        return {
-          title: title || 'Resource',
-          url: url || '#'
-        };
-      });
-  } catch (error) {
-    console.error("Error parsing resources:", error);
+    return JSON.parse(resourcesStr);
+  } catch (e) {
+    console.error("Error parsing resources:", e);
     return [];
   }
 };

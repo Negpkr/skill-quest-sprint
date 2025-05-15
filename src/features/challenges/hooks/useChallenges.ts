@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
-import { ChallengeProps } from "../types/ChallengeCard";
+import { ChallengeProps } from "@/components/ChallengeCard";
 
 // Sample challenges data with improved images as fallback
 const challengesData: ChallengeProps[] = [
