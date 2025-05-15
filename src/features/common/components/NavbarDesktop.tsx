@@ -11,18 +11,11 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import UserMenu from "@/features/common/components/UserMenu";
+import UserMenu from "./UserMenu";
 import NavbarLearnDropdown from "./NavbarLearnDropdown";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/contexts/AuthContext";
 
 const NavbarDesktop: React.FC = () => {
-  const { user, signOut } = useAuth();
-  
-  const handleSignOut = async () => {
-    await signOut();
-  };
-  
   return (
     <div className="hidden md:flex md:items-center md:space-x-4">
       <NavigationMenu>
@@ -80,7 +73,7 @@ const NavbarDesktop: React.FC = () => {
           
           {/* User Menu */}
           <NavigationMenuItem>
-            <UserMenu user={user} handleSignOut={handleSignOut} />
+            <UserMenu />
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>

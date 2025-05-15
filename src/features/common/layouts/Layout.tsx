@@ -1,20 +1,18 @@
 
-import React, { ReactNode } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import React from "react";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 interface LayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-grow">{children}</main>
       <Footer />
-      <Toaster />
     </div>
   );
 };

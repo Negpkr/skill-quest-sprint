@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { filterAnimations } from "./animations";
+import { categories, difficulties } from "@/hooks/useChallenges";
 import {
   Select,
   SelectContent,
@@ -21,8 +22,6 @@ interface ChallengeFiltersProps {
   selectedDifficulty: string;
   setSelectedDifficulty: (value: string) => void;
   resetFilters: () => void;
-  categories: string[];
-  difficulties: string[];
 }
 
 const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
@@ -32,9 +31,7 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
   setSelectedCategory,
   selectedDifficulty,
   setSelectedDifficulty,
-  resetFilters,
-  categories,
-  difficulties
+  resetFilters
 }) => {
   // Local handler to ensure resetFilters is properly called
   const handleResetFilters = useCallback(() => {
@@ -42,15 +39,15 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
     resetFilters();
     // Explicitly set values locally as well to ensure UI updates
     setSearchTerm("");
-    setSelectedCategory("");
-    setSelectedDifficulty("");
+    setSelectedCategory("All");
+    setSelectedDifficulty("All");
   }, [resetFilters, setSearchTerm, setSelectedCategory, setSelectedDifficulty]);
 
   // Check if any filters are active
   const hasActiveFilters = 
     searchTerm !== "" || 
-    selectedCategory !== "" || 
-    selectedDifficulty !== "";
+    selectedCategory !== "All" || 
+    selectedDifficulty !== "All";
 
   return (
     <motion.div 
@@ -87,7 +84,7 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
           <SelectContent>
             {categories.map((category) => (
               <SelectItem key={category} value={category}>
-                {category}
+                {category === "All" ? "All Categories" : category}
               </SelectItem>
             ))}
           </SelectContent>
@@ -100,7 +97,7 @@ const ChallengeFilters: React.FC<ChallengeFiltersProps> = ({
           <SelectContent>
             {difficulties.map((difficulty) => (
               <SelectItem key={difficulty} value={difficulty}>
-                {difficulty}
+                {difficulty === "All" ? "All Difficulties" : difficulty}
               </SelectItem>
             ))}
           </SelectContent>

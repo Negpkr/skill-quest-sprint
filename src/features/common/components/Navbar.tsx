@@ -3,19 +3,18 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import NavbarBrand from "@/components/navbar/NavbarBrand";
-import NavbarDesktop from "@/features/common/components/NavbarDesktop";
-import NavbarMobile from "@/features/common/components/NavbarMobile";
 
-interface NavbarProps {}
+// Import the refactored components
+import NavbarBrand from "./navbar/NavbarBrand";
+import NavbarDesktop from "./navbar/NavbarDesktop";
+import NavbarMobile from "./navbar/NavbarMobile";
 
-const Navbar: React.FC<NavbarProps> = () => {
-  const { user } = useAuth();
+const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { signOut } = useAuth();
   const navigate = useNavigate();
   
   const handleSignOut = async () => {
-    const { signOut } = useAuth();
     await signOut();
     navigate('/');
   };
@@ -43,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       
       {/* Mobile Navigation Menu */}
       <NavbarMobile 
-        isOpen={isOpen}
+        isOpen={isOpen} 
         setIsOpen={setIsOpen}
         handleSignOut={handleSignOut}
       />

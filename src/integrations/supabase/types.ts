@@ -9,6 +9,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      contact_messages: {
+        Row: {
+          id: string
+          name: string
+          email: string
+          subject: string
+          message: string
+          created_at: string | null
+          status: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          email: string
+          subject: string
+          message: string
+          created_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          email?: string
+          subject?: string
+          message?: string
+          created_at?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      problem_reports: {
+        Row: {
+          id: string
+          issue_type: string
+          description: string
+          email: string | null
+          created_at: string | null
+          status: string | null
+        }
+        Insert: {
+          id?: string
+          issue_type: string
+          description: string
+          email?: string | null
+          created_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          id?: string
+          issue_type?: string
+          description?: string
+          email?: string | null
+          created_at?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       challenges: {
         Row: {
           content: string | null
@@ -115,63 +172,6 @@ export type Database = {
         }
         Relationships: []
       }
-      contact_messages: {
-        Row: {
-          created_at: string | null
-          email: string
-          id: string
-          message: string
-          name: string
-          status: string | null
-          subject: string
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          id?: string
-          message: string
-          name: string
-          status?: string | null
-          subject: string
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          id?: string
-          message?: string
-          name?: string
-          status?: string | null
-          subject?: string
-        }
-        Relationships: []
-      }
-      problem_reports: {
-        Row: {
-          created_at: string | null
-          description: string
-          email: string | null
-          id: string
-          issue_type: string
-          status: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description: string
-          email?: string | null
-          id?: string
-          issue_type: string
-          status?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string
-          email?: string | null
-          id?: string
-          issue_type?: string
-          status?: string | null
-        }
-        Relationships: []
-      }
       sprints: {
         Row: {
           category: string
@@ -181,7 +181,6 @@ export type Database = {
           difficulty: string
           duration: number | null
           id: string
-          slug: string
           title: string
         }
         Insert: {
@@ -192,7 +191,6 @@ export type Database = {
           difficulty: string
           duration?: number | null
           id?: string
-          slug: string
           title: string
         }
         Update: {
@@ -203,7 +201,6 @@ export type Database = {
           difficulty?: string
           duration?: number | null
           id?: string
-          slug?: string
           title?: string
         }
         Relationships: []
@@ -267,7 +264,6 @@ export type Database = {
           challenge_id: string | null
           completed: boolean | null
           completed_date: string | null
-          current_day: number | null
           id: string
           notes: string | null
           sprint_id: string | null
@@ -278,7 +274,6 @@ export type Database = {
           challenge_id?: string | null
           completed?: boolean | null
           completed_date?: string | null
-          current_day?: number | null
           id?: string
           notes?: string | null
           sprint_id?: string | null
@@ -289,7 +284,6 @@ export type Database = {
           challenge_id?: string | null
           completed?: boolean | null
           completed_date?: string | null
-          current_day?: number | null
           id?: string
           notes?: string | null
           sprint_id?: string | null

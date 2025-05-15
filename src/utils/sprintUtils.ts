@@ -1,28 +1,40 @@
 
-/**
- * Parse resources string (JSON format) into an array of resource objects
- */
-export const parseResources = (resourcesString: string): { title: string; url: string }[] => {
-  if (!resourcesString) return [];
-  
-  try {
-    const parsedResources = JSON.parse(resourcesString);
-    if (Array.isArray(parsedResources)) {
-      return parsedResources;
-    }
-    return [];
-  } catch (error) {
-    console.error('Error parsing resources:', error);
-    return [];
-  }
+// Define a mapping for string IDs to UUIDs for compatibility with mock data
+export const idToUuidMap: Record<string, string> = {
+  'design-starter': 'd0d766ab-5ca8-45c1-b789-500d132c8710',
+  'web-dev': '08c8f5db-c37e-417d-a6a4-d10c0bb78e52',
+  'freelance-launchpad': '7ead586e-49a1-4ba0-bbeb-97f6cc482170',
+  'personal-brand': '7a8d9d12-441d-4fe8-a9ab-3a40ea4fb2d3',
+  'productivity': '07d5fc8e-a14c-42ee-b7e9-19fb27eb4b56',
+  'freelance-pro': 'd43fed60-f098-42f9-8afc-ba2c19d61b70'
 };
 
-/**
- * Find a sprint ID by its slug
- */
-export const findSprintIdBySlug = (slug: string | undefined, sprints: any[]): string | undefined => {
-  if (!slug || !sprints || !sprints.length) return undefined;
-  
-  const sprint = sprints.find(s => s.slug === slug);
-  return sprint?.id;
+// Helper function to find the UUID from the challenge ID mapping
+export const findSprintIdBySlug = (slug: string): string | null => {
+  // Check if the slug is directly in our mapping
+  if (idToUuidMap[slug]) {
+    return idToUuidMap[slug];
+  }
+
+  // Check if the slug is already a UUID
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (uuidRegex.test(slug)) {
+    console.log("ID is already a valid UUID:", slug);
+    return slug;
+  }
+
+  console.log("ID is not a valid UUID and not in mapping:", slug);
+  return slug; // If not found, return the original slug
+};
+
+// Parse resources string to JSON
+export const parseResources = (resourcesStr: string | null) => {
+  if (!resourcesStr) return [];
+
+  try {
+    return JSON.parse(resourcesStr);
+  } catch (e) {
+    console.error("Error parsing resources:", e);
+    return [];
+  }
 };

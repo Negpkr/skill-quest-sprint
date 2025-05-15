@@ -5,7 +5,7 @@ import { Challenge } from "@/types/sprint";
 import { useChallengeFetch } from "./useChallengeFetch";
 import { useChallengeProgress } from "./useChallengeProgress";
 import { useChallengeCompletion } from "./useChallengeCompletion";
-import { useStreakData } from "@/hooks/useStreakData";
+import { useStreakData } from "./useStreakData";
 import { UseChallengeReturn } from "@/types/sprint";
 
 export const useChallenge = (id: string | undefined): UseChallengeReturn => {

@@ -10,7 +10,6 @@ import SprintResources from "@/components/sprint-detail/SprintResources";
 import DaysPreview from "@/components/sprint-detail/DaysPreview";
 import LoadingState from "@/components/sprint-detail/LoadingState";
 import NotFoundState from "@/components/sprint-detail/NotFoundState";
-import { parseResources } from "@/utils/sprintUtils";
 
 const ChallengeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -87,10 +86,7 @@ const ChallengeDetail: React.FC = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <SprintOverview challenge={challenge} handleStartSprint={handleStartSprint} />
-          <SprintResources 
-            challenge={challenge} 
-            handleStartSprint={handleStartSprint} 
-          />
+          <SprintResources challenge={challenge} handleStartSprint={handleStartSprint} />
         </div>
         
         <DaysPreview sprintDays={sprintDays} handleStartSprint={handleStartSprint} />
