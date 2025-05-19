@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
+import EnhancedDashboard from "./pages/EnhancedDashboard";
 import Practice from "./pages/Practice";
 import ChallengeView from "./pages/ChallengeView";
 import ChallengeDetail from "./pages/ChallengeDetail";
@@ -70,7 +71,7 @@ const App = () => {
                 {/* Protected routes */}
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
-                    <Dashboard />
+                    <EnhancedDashboard />
                   </ProtectedRoute>
                 } />
                 <Route path="/practice" element={
