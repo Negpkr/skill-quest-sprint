@@ -1,91 +1,140 @@
 # SkillSprint MVP
 
-A modern web application built with Next.js and Tailwind CSS.
+https://preview--skill-quest-sprint.lovable.app/
 
-## Prerequisites
+An app that helps beginners quickly learn a skill and launch their first mini-income stream in just 30 days — simple,
+guided, and action-focused.
 
-- Node.js 18.16.1 or higher
-- npm 9.5.1 or higher
+Built with [Lovable](https://lovable.dev) (AI-powered development platform), Vite, React, TypeScript, and Tailwind CSS, featuring a beautiful UI powered by shadcn/ui components. This project is hosted on GitLab and serves as a reference implementation for future development.
 
-## Getting Started
+## Quick Start 🚀
 
-1. Clone the repository:
+1. **Clone & Install**
 ```bash
-git clone https://github.com/your-username/skillsprint-mvp.git
-cd skillsprint-mvp
-```
-
-2. Install dependencies:
-```bash
+git clone https://gitlab.com/your-organization/skill-quest-sprint.git
+cd skill-quest-sprint
 npm install
 ```
 
-3. Run the development server:
+2. **Environment Setup**
+```bash
+cp .env.example .env.local
+# Edit .env.local with your configuration
+```
+
+3. **Start Development**
 ```bash
 npm run dev
 ```
+Access the application at [http://localhost:5173](http://localhost:5173)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Development with Lovable 🛠
 
-## Project Structure
+This project is primarily developed using [Lovable](https://lovable.dev), an AI-powered development platform that helps:
+- Generate and modify code through natural language prompts
+- Maintain consistent code style and best practices
+- Speed up development with AI-assisted coding
+- Automatically handle common development tasks
+
+To contribute using Lovable:
+1. Visit the [Lovable Project](https://lovable.dev/projects/d35c4ebb-140b-419e-975e-f37c73bdc7fd)
+2. Start prompting to make changes
+3. Changes will be automatically committed to the GitHub repository
+
+## Documentation 📚
+
+All project documentation is stored in the `docs/` directory:
+
+- `docs/Development_Plan/` - Development plan for 2025T1 Phase 2
+- `docs/How_It_Works/` - Application logic
+- `docs/Proposal/` - Project proposal
+- `docs/Team_GitHub_Workflow/` - Standard workflow for team collaboration
+
+
+## Key Features ✨
+
+- AI-powered 30-Days Challenge Creator (auto-suggests daily tasks)
+- Daily Action Checklist (check off tasks)
+- Progress Tracker (visual streaks or progress bar)
+- Resources Linker (connect to simple articles/videos if needed)
+
+## Project Structure 📁
 
 ```
-skillsprint-mvp/
-├── src/                    # Source directory
-│   ├── app/               # App router directory
-│   │   ├── layout.tsx     # Root layout
-│   │   └── page.tsx       # Home page
-│   └── components/        # React components
-├── public/                # Static files
-├── tailwind.config.ts     # Tailwind CSS configuration
-└── tsconfig.json         # TypeScript configuration
+skill-quest-sprint/
+├── src/                    # Source code
+│   ├── components/        # UI components
+│   │   ├── ui/           # shadcn/ui components
+│   │   └── shared/       # Shared components
+│   ├── features/         # Feature modules
+│   ├── hooks/            # Custom React hooks
+│   ├── integrations/     # External services
+│   └── utils/            # Helper functions
+├── docs/                  # Documentation
+├── public/               # Static assets
+└── supabase/            # Database config
 ```
 
-## Available Scripts
+## Development Guidelines 🛠
 
-- `npm run dev` - Runs the development server
-- `npm run build` - Builds the application for production
-- `npm start` - Runs the production server
-- `npm run lint` - Runs ESLint for code linting
+### Code Style
+- Use TypeScript for type safety
+- Follow ESLint rules
+- Use Tailwind CSS for styling
+- Create reusable components
 
-## Technologies Used
+### GitLab Workflow
+1. Create feature branch from `main`
+2. Follow conventional commits
+3. Create merge request
+4. Ensure CI/CD passes
 
-- [Next.js](https://nextjs.org/) - React framework for production
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [TypeScript](https://www.typescriptlang.org/) - JavaScript with syntax for types
-- [ESLint](https://eslint.org/) - Code linting tool
+## Available Scripts 📜
 
-## Development Guidelines
+```bash
+npm run dev        # Start development server
+npm run build      # Build for production
+npm run preview    # Preview production build
+npm run lint       # Run ESLint
+```
 
-1. Follow the TypeScript best practices and maintain type safety
-2. Use Tailwind CSS for styling components
-3. Follow the ESLint rules for consistent code style
-4. Create reusable components in the `src/components` directory
-5. Use the App Router for routing (`src/app` directory)
+## Technology Stack 💻
 
-## Contributing
+### Frontend
+- Vite + React + TypeScript
+- Tailwind CSS + shadcn/ui
+- React Query + Context API
+- React Router
+- Framer Motion
 
-1. Create a new branch for your feature
-2. Make your changes
-3. Submit a pull request
+### Backend
+- Supabase
+  - PostgreSQL
+  - Authentication
+  - Real-time features
+  - Storage
 
-## License
+## Contributing 🤝
 
-This project is licensed under the MIT License.
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a merge request
+
+## Support 💬
+
+- 📚 Check the documentation
+- 🐛 Create an issue in GitLab
+
+## Pending Improvements 📋
+
+### High Priority
+- [ ] Implement real AI generation for sprint challenge
+- [ ] Add pre-designed sprint program with resources and working templates
 
 
 
-
-
-
-
-# Team Documentation
-
-<img width="570" alt="image" src="https://github.com/user-attachments/assets/8b32d367-0c34-494f-b47d-49f0706c24a4" />
-<img width="599" alt="image" src="https://github.com/user-attachments/assets/d66e58e5-0be6-4eb8-900b-a2215d5253b3" />
-<img width="614" alt="image" src="https://github.com/user-attachments/assets/d087d63b-8b12-4901-a63c-9ccacd72d336" />
-<img width="620" alt="image" src="https://github.com/user-attachments/assets/aea9d1ad-0b24-4f4d-8647-abb211fb8219" />
-<img width="588" alt="image" src="https://github.com/user-attachments/assets/f712ef00-60ba-47ad-9361-aef81cb8b4be" />
 
 
 
